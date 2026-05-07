@@ -1,20 +1,42 @@
-import { generateAudit } from "@/engine/recommendation-engine"
 import { mockAudit } from "@/data/mock-audit"
+
+import { generateAudit } from "@/engine/recommendation-engine"
+
+import { AuditSummary } from "@/components/audit/audit-summary"
+
+import { RecommendationsList } from "@/components/audit/recommendations-list"
 
 export default function Home() {
   const result = generateAudit(mockAudit)
 
-  console.log(result)
-
   return (
-    <main className="p-10">
-      <h1 className="text-3xl font-bold">
-        AI Cost Lens
-      </h1>
+    <main className="mx-auto max-w-5xl p-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold">
+          AI Cost Lens
+        </h1>
 
-      <pre className="mt-6 rounded bg-black p-4 text-sm text-white">
-        {JSON.stringify(result, null, 2)}
-      </pre>
+        <p className="mt-2 text-muted-foreground">
+          AI subscription audit and optimization dashboard
+        </p>
+      </div>
+
+      <AuditSummary
+        totalMonthlySpend={result.totalMonthlySpend}
+        estimatedMonthlySavings={
+          result.estimatedMonthlySavings
+        }
+      />
+
+      <div className="mt-10">
+        <h2 className="mb-4 text-2xl font-semibold">
+          Recommendations
+        </h2>
+
+        <RecommendationsList
+          recommendations={result.recommendations}
+        />
+      </div>
     </main>
   )
 }
