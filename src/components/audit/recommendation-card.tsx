@@ -4,16 +4,35 @@ type Props = {
   recommendation: AuditRecommendation
 }
 
+const severityStyles = {
+  high: "bg-red-100 text-red-700",
+  medium:
+    "bg-yellow-100 text-yellow-700",
+  low: "bg-gray-100 text-gray-700",
+}
+
 export function RecommendationCard({
   recommendation,
 }: Props) {
   return (
-    <div className="rounded-2xl border p-5">
-      <div className="flex items-start justify-between gap-4">
+    <div className="rounded-2xl border p-5 hover:shadow-sm transition-shadow">
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
-          <h3 className="font-semibold">
-            {recommendation.title}
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold">
+              {recommendation.title}
+            </h3>
+
+            <span
+              className={`rounded-full px-3 py-1 text-xs font-medium ${
+                severityStyles[
+                  recommendation.severity
+                ]
+              }`}
+            >
+              {recommendation.severity.toUpperCase()}
+            </span>
+          </div>
 
           <p className="mt-2 text-sm text-muted-foreground">
             {recommendation.description}
@@ -28,14 +47,11 @@ export function RecommendationCard({
           <p className="font-bold text-green-600">
             ₹
             {recommendation.estimatedSavings.toLocaleString()}
+            <span className="text-sm font-medium text-muted-foreground">
+              /month
+            </span>
           </p>
         </div>
-      </div>
-
-      <div className="mt-4">
-        <span className="rounded-full bg-muted px-3 py-1 text-xs capitalize">
-          {recommendation.severity} priority
-        </span>
       </div>
     </div>
   )
