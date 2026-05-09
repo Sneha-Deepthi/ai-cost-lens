@@ -1,47 +1,268 @@
-# Pricing Data Reference
+# PRICING_DATA.md
 
-Verified:
-2026-05-07
+Every number used in the recommendation engine traces to a vendor's official pricing page.
 
----
+Verified: 2026-05-07  
+Last Updated: 2026-05-08
 
-# Supported AI Tools
+All prices are normalized into approximate monthly USD equivalents where required.
 
-| Tool | Plans Supported |
-|---|---|
-| ChatGPT | Plus, Team, Enterprise, API Direct |
-| Claude | Pro, Max, Team, Enterprise, API Direct |
-| Cursor | Hobby, Pro, Business, Enterprise |
-| GitHub Copilot | Individual, Business, Enterprise |
-| Gemini | Pro, Ultra, API |
-| Lovable | Free, Pro, Business, Enterprise |
+Pricing may change over time as vendors update public plans and enterprise offerings.
 
 ---
 
-# Pricing Notes
+## Cursor
 
-- Enterprise pricing is treated as custom pricing when public pricing is unavailable.
-- API pricing is simplified for MVP recommendation logic.
-- Pricing values are normalized into approximate monthly cost estimates where necessary.
-- Some regional pricing may vary depending on billing country.
+Source: https://cursor.com/pricing
+
+| Plan | Price | Billing |
+|---|---|---|
+| Hobby | $0/month | — |
+| Pro | $20/user/month | Monthly |
+| Teams | $40/user/month | Monthly |
+| Enterprise | Custom (floor estimate: $60/user/month used in engine) | Custom |
+
+Notes:
+- Hobby plan has limited AI requests; not viable for professional daily use.
+- Teams adds RBAC, SAML/OIDC SSO, shared chats, usage analytics, and centralized billing.
+- Enterprise adds audit logs, SCIM, invoice billing, and priority support.
+- No annual discount documented on the public pricing page as of verification date.
 
 ---
 
-# Data Sources
+## GitHub Copilot
 
-- https://chatgpt.com/pricing
-- https://claude.com/pricing
-- https://cursor.com/pricing
-- https://github.com/features/copilot/plans
-- https://gemini.google/subscriptions
-- https://lovable.dev/pricing
+Source: https://github.com/features/copilot/plans
+
+| Plan | Price | Billing |
+|---|---|---|
+| Individual | $10/user/month | Monthly |
+| Business | $19/user/month | Monthly |
+| Enterprise | $39/user/month | Monthly |
+
+Notes:
+- Individual includes AI code completion and chat inside supported IDEs.
+- Business adds organization management, policy controls, and centralized billing.
+- Enterprise adds advanced governance, enterprise security, and audit controls.
+- No annual discount documented on the public pricing page as of verification date.
 
 ---
 
-# MVP Simplifications
+## Claude
 
-The MVP currently:
-- uses static pricing snapshots
-- does not fetch live pricing dynamically
-- does not estimate exact token/API consumption
-- uses rule-based recommendation logic instead of ML-based optimization
+Source: https://claude.com/pricing
+
+| Plan | Monthly Price | Annual Price (per seat/month) |
+|---|---|---|
+| Free | $0 | — |
+| Pro | $20/month | $17/month (billed annually) |
+| Max | $100/month | $100/month |
+| Team (Standard) | $25/seat/month | $20/seat/month (billed annually) |
+| Team (Premium) | $125/seat/month | $100/seat/month (billed annually) |
+| Enterprise | Custom (floor estimate: $150/seat/month used in engine) | Custom |
+| API Direct | Usage-based (see API section below) | — |
+
+Notes:
+- Pro annual billing saves $3/seat/month ($36/seat/year).
+- Team Standard annual billing saves $5/seat/month ($60/seat/year).
+- Team Premium annual billing saves $25/seat/month ($300/seat/year).
+- Max is designed for users who consistently exhaust Pro usage caps.
+- Enterprise adds SCIM, audit logs, compliance APIs, role-based permissions, and admin spend controls.
+
+### Claude API Pricing
+
+Source: https://claude.com/pricing#api
+
+| Model | Input | Output |
+|---|---|---|
+| Claude Opus 4.7 | $5.00 / MTok | $25.00 / MTok |
+| Claude Sonnet 4.6 | $3.00 / MTok | $15.00 / MTok |
+| Claude Haiku 4.5 | $1.00 / MTok | $5.00 / MTok |
+
+Notes:
+- MTok = 1 million tokens.
+- Haiku is significantly cheaper than Sonnet and Opus for lightweight workloads.
+- Haiku is suitable for summarization, extraction, classification, and formatting tasks.
+- Sonnet and Opus are better suited for advanced reasoning workloads.
+- The recommendation engine uses conservative API routing optimization assumptions.
+
+---
+
+## ChatGPT
+
+Source: https://chatgpt.com/pricing
+
+| Plan | Monthly Price | Annual Price (per seat/month) |
+|---|---|---|
+| Plus | $20/month | $20/month |
+| Team | $30/user/month | $25/user/month (billed annually) |
+| Enterprise | Custom (floor estimate: $60/user/month used in engine) | Custom |
+| API Direct | Usage-based (see OpenAI API pricing) | — |
+
+Notes:
+- Team annual billing saves $5/seat/month ($60/seat/year).
+- Team adds shared workspaces, centralized billing, admin controls, SAML SSO, and GPT analytics.
+- Enterprise adds SCIM, compliance tooling, regional data controls, and advanced governance features.
+
+### OpenAI API Pricing
+
+Source: https://openai.com/api/pricing/
+
+Notes:
+- API pricing is usage-based and varies significantly by model tier.
+- Recommendation logic treats API subscriptions as workload-based spend.
+- API optimization recommendations are triggered when spend exceeds predefined thresholds.
+
+---
+
+## Gemini
+
+Source: https://gemini.google/subscriptions/
+
+| Plan | Price | Notes |
+|---|---|---|
+| Pro | ~$20/month (₹1,950/month in India) | Individual |
+| Ultra | ~$300/month (₹24,500/month in India) | Heavy multimodal usage |
+| API Direct | Usage-based | See Google AI Dev pricing |
+
+Source (API): https://ai.google.dev/gemini-api/docs/pricing
+
+Notes:
+- Gemini Ultra pricing converted using approximate exchange-rate normalization.
+- Gemini Pro is strongly positioned for Google Workspace-integrated teams.
+- No annual discount documented on the public pricing page as of verification date.
+
+---
+
+## Windsurf
+
+Source: https://windsurf.com/pricing
+
+| Plan | Price | Billing |
+|---|---|---|
+| Free | $0/month | — |
+| Pro | ~$20/month | Monthly |
+| Teams | ~$40/user/month | Monthly |
+| Max | ~$200/month | Monthly |
+| Enterprise | Custom (floor estimate: $60/user/month used in engine) | Custom |
+
+Notes:
+- Pro includes expanded Cascade AI usage and agentic coding workflows.
+- Teams adds centralized billing, collaboration tooling, and admin workflows.
+- Max is designed for extremely high AI usage environments.
+- Enterprise includes SSO, RBAC, and advanced governance tooling.
+- Windsurf pricing marked as approximate due to evolving public pricing information.
+
+---
+
+## Lovable
+
+Source: https://lovable.dev/pricing
+
+| Plan | Price | Credits |
+|---|---|---|
+| Free | $0/month | 5 daily / 30 monthly |
+| Pro | $25/month | 100 monthly credits |
+| Business | $50/month | Collaboration features included |
+| Enterprise | Custom platform pricing | Volume-based |
+
+Notes:
+- Lovable uses a credit-based pricing model rather than seat-based pricing.
+- Pro is optimized for solo founders and indie builders.
+- Business adds publishing controls, collaboration features, and SSO support.
+- Credit consumption varies based on AI generation complexity.
+
+---
+
+## Engine Estimation Methodology
+
+### Enterprise Plan Floor Estimates
+
+Several vendors do not publicly disclose exact enterprise pricing.
+
+The engine uses conservative floor estimates for:
+- Cursor Enterprise
+- ChatGPT Enterprise
+- Claude Enterprise
+- Windsurf Enterprise
+
+These values are intentionally conservative to avoid exaggerated savings projections.
+
+---
+
+### Redundant Subscription Savings
+
+#### Conversational AI Overlap
+
+Applies to:
+- ChatGPT
+- Claude
+- Gemini
+
+The engine assumes:
+- 60% of overlapping spend may be recoverable
+- 40% operational overlap buffer remains for legitimate workflow differences
+
+#### Coding Assistant Overlap
+
+Applies to:
+- Cursor
+- GitHub Copilot
+- Windsurf
+
+The engine assumes:
+- secondary coding assistant subscriptions may represent redundant engineering spend
+- overlap recommendations remain conservative and workflow-aware
+
+---
+
+### API Model Routing Savings
+
+API optimization recommendations are triggered when:
+- monthly API spend exceeds operational thresholds
+
+The engine assumes:
+- lightweight workloads may not require premium reasoning models
+- routing simpler tasks to cheaper model tiers can significantly reduce spend
+
+---
+
+### Annual Billing Savings
+
+Documented annual discounts currently modeled:
+
+| Tool | Monthly | Annual Equivalent | Savings |
+|---|---|---|---|
+| Claude Pro | $20 | $17 | $3/month |
+| Claude Team Standard | $25 | $20 | $5/month |
+| Claude Team Premium | $125 | $100 | $25/month |
+| ChatGPT Team | $30 | $25 | $5/month |
+
+---
+
+### Savings Cap
+
+Total estimated savings are capped at 90% of total monthly spend.
+
+The engine intentionally avoids unrealistic:
+- full-elimination assumptions
+- exaggerated optimization claims
+- impossible operational savings
+
+---
+
+## Recommendation Engine Philosophy
+
+The recommendation engine is designed to produce:
+- explainable recommendations
+- realistic savings estimates
+- financially defensible optimization logic
+- maintainable pricing intelligence
+- trustworthy SaaS audit reasoning
+
+The engine intentionally favors:
+- conservative estimates
+- operational realism
+- workflow-aware optimization
+- pricing traceability
+- transparent financial assumptions

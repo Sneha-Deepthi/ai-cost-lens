@@ -35,7 +35,7 @@ export function RecommendationCard({
           </div>
 
           <p className="mt-2 text-sm text-muted-foreground">
-            {recommendation.description}
+            {recommendation.reasoning}
           </p>
         </div>
 
@@ -46,7 +46,8 @@ export function RecommendationCard({
 
           <p className="font-bold text-green-600">
             ₹
-            {recommendation.estimatedSavings.toLocaleString()}
+            {recommendation.estimatedMonthlySavings.toLocaleString()}
+
             <span className="text-sm font-medium text-muted-foreground">
               /month
             </span>
