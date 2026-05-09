@@ -92,3 +92,55 @@
 - Add realistic demo scenarios and mock datasets
 - Improve mobile responsiveness and UI polish
 - Begin adding unit tests for recommendation engine behavior
+
+## Day 4 - 2026-05-08
+
+**Hours worked:** 7
+
+**What I did:**
+- Refactored the recommendation engine into a modular rule-based audit system
+- Added advanced audit rules for:
+  - conversational AI overlap detection
+  - coding assistant overlap detection
+  - premium tier overprovisioning
+  - governance/team-plan overspend
+  - workflow mismatch detection
+  - API optimization opportunities
+  - annual billing savings recommendations
+- Added recommendation prioritization and deduplication logic
+- Improved savings estimation realism using conservative financial modeling
+- Added optimization score calculation and annual savings projections
+- Expanded recommendation metadata with:
+  - confidence levels
+  - recommendation categories
+  - reasoning and action fields
+  - source rule traceability
+- Added per-tool audit breakdown generation
+- Centralized pricing intelligence and SaaS pricing assumptions inside the engine
+- Fixed tool-family detection issues caused by inconsistent tool ID parsing
+- Updated UI components to support the enhanced recommendation schema
+- Improved recommendation presentation and empty-state handling
+- Created detailed `PRICING_DATA.md` documentation with:
+  - verified vendor pricing references
+  - enterprise pricing assumptions
+  - annual billing discounts
+  - API pricing notes
+  - engine estimation methodology
+  - optimization logic explanations
+
+**What I learned:**
+- Recommendation systems feel significantly more trustworthy when every optimization suggestion is financially explainable.
+- Conservative savings estimates improve credibility more than aggressive optimization claims.
+- SaaS pricing models vary heavily between seat-based, usage-based, and credit-based systems, which impacts audit logic design.
+- Explainability and traceability are critical when building recommendation-driven systems.
+
+**Blockers / what I'm stuck on:**
+- Designing recommendation heuristics that remain realistic across both small startups and large enterprise organizations is still challenging.
+- Some enterprise pricing assumptions require conservative estimation because vendors do not publicly disclose exact pricing.
+
+**Plan for tomorrow:**
+- Add realistic demo company scenarios and mock audit presets
+- Begin adding unit tests for recommendation engine behavior
+- Improve dashboard summary presentation and audit insights
+- Add recommendation confidence/category badges to the UI
+- Continue mobile responsiveness and layout polish
