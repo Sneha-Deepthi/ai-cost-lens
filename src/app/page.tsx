@@ -8,12 +8,11 @@ import { AuditSummary } from "@/components/audit/audit-summary"
 
 import { RecommendationsList } from "@/components/audit/recommendations-list"
 
+import { MetricCard } from "@/components/dashboard/metric-card"
+
 import { generateAudit } from "@/engine/recommendation-engine"
 
-import {
-  AuditFormState,
-  AuditResult,
-} from "@/types/audit"
+import {AuditFormState, AuditResult} from "@/types/audit"
 
 export default function Home() {
   const [auditResult, setAuditResult] =
@@ -87,6 +86,31 @@ export default function Home() {
       <AuditForm
         onSubmit={handleGenerateAudit}
       />
+
+      {auditResult && (
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <MetricCard
+            title="Monthly Spend"
+            value={`₹${auditResult.totalMonthlySpend.toLocaleString()}`}
+          />
+
+          <MetricCard
+            title="Estimated Monthly Savings"
+            value={`₹${auditResult.estimatedMonthlySavings.toLocaleString()}`}
+          />
+
+          <MetricCard
+            title="Estimated Annual Savings"
+            value={`₹${auditResult.estimatedAnnualSavings.toLocaleString()}`}
+          />
+
+          <MetricCard
+            title="Optimization Score"
+            value={`${auditResult.optimizationScore}/100`}
+            subtitle="Higher is better"
+          />
+        </div>
+      )}
 
       {auditResult && (
         <div className="rounded-2xl border p-6">

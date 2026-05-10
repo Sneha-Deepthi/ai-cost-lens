@@ -1,106 +1,57 @@
 // =============================================================================
 // recommendation-engine.ts
 // AI Spend Audit — Recommendation Engine
-//
-// Pricing verified: May 2026
-// Sources:
-//   Cursor      https://cursor.com/pricing
-//   Copilot     https://github.com/features/copilot/plans
-//   Claude      https://claude.com/pricing
-//   ChatGPT     https://chatgpt.com/pricing
-//   Gemini      https://gemini.google/subscriptions/
-//   Windsurf    https://windsurf.com/pricing
-//   Lovable     https://lovable.dev/pricing
 // =============================================================================
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-export type UseCase = "coding" | "writing" | "research" | "data" | "mixed";
-
-export type Severity = "low" | "medium" | "high";
-
-export type PlanTier = "individual" | "team" | "enterprise" | "premium_individual";
-
-export interface Subscription {
-  /** e.g. "cursor_pro", "claude_team_standard", "chatgpt_team" */
-  toolId: string;
-  /** Actual USD amount paid this month */
-  monthlySpend: number;
-  /** Number of licensed seats on this subscription */
-  seats: number;
-}
-
-export interface AuditInput {
-  subscriptions: Subscription[];
-  /** Total headcount using AI tools */
-  teamSize: number;
-  primaryUseCase: UseCase;
-}
-
-export interface AuditRecommendation {
-  /** toolId this applies to, or "cross_tool" for overlap rules */
-  toolId: string;
-  title: string;
-  /** Finance-literate explanation with actual numbers — the "why" */
-  reasoning: string;
-  /** Concrete next step: "Downgrade to X", "Cancel Y", "Switch to Z" */
-  action: string;
-  estimatedMonthlySavings: number;
-  severity: Severity;
-  /** Rule identifier for auditability and testing */
-  sourceRule: string;
-}
-
-export interface PerToolBreakdown {
-  toolId: string;
-  displayName: string;
-  currentMonthlySpend: number;
-  /** Short action label shown in the results table */
-  recommendation: string;
-  estimatedSavings: number;
-  /** One-sentence plain-English reason */
-  note: string;
-}
-
-export interface AuditResult {
-  totalMonthlySpend: number;
-  /** Capped at 90 % of totalMonthlySpend — we never claim to eliminate all spend */
-  estimatedMonthlySavings: number;
-  /** estimatedMonthlySavings × 12 */
-  estimatedAnnualSavings: number;
-  /** savings as a percentage of total spend */
-  savingsPercent: number;
-  perToolBreakdown: PerToolBreakdown[];
-  /** Sorted descending by estimatedMonthlySavings */
-  recommendations: AuditRecommendation[];
-  /** true when savings < $100/mo — show "you're spending well" message */
-  isAlreadyOptimal: boolean;
-  /** true when savings > $500/mo — surface Credex CTA prominently */
-  isHighSavings: boolean;
-}
+import {
+  AuditInput,
+  AuditRecommendation,
+  AuditResult,
+  WorkflowType,
+} from "@/types/audit"
 
 // ---------------------------------------------------------------------------
-// Plan catalogue
+// Local helper types only
 // ---------------------------------------------------------------------------
-// Single source of truth for every supported plan's pricing.
-// Update prices here and every rule automatically picks up the new numbers.
-// ---------------------------------------------------------------------------
+
+type UseCase = WorkflowType
+
+type PlanTier =
+  | "individual"
+  | "team"
+  | "enterprise"
+  | "premium_individual"
+
+type PerToolBreakdown = {
+  toolId: string
+
+  displayName: string
+
+  currentMonthlySpend: number
+
+  recommendation: string
+
+  estimatedSavings: number
+
+  note: string
+}
 
 interface PlanEntry {
-  tool: string;
-  plan: string;
-  /** USD per seat per month billed monthly */
-  monthlyPerSeat: number;
-  /** USD per seat per month billed annually (0 = same as monthly / no discount) */
-  annualPerSeat: number;
-  tier: PlanTier;
-  /** Use cases this plan is a good fit for */
-  useCaseFit: UseCase[];
-  /** The next cheaper plan within the same tool — null if this is already the cheapest */
-  nextCheaperPlanId: string | null;
+  tool: string
+
+  plan: string
+
+  monthlyPerSeat: number
+
+  annualPerSeat: number
+
+  tier: PlanTier
+
+  useCaseFit: UseCase[]
+
+  nextCheaperPlanId: string | null
 }
+
 
 export const PLAN_CATALOGUE: Record<string, PlanEntry> = {
   // ── Cursor ──────────────────────────────────────────────────────────────────
@@ -407,6 +358,12 @@ function toolFamily(
   return toolId.split("-")[0]
 }
 
+function getPrimaryWorkflow(
+  input: AuditInput
+): WorkflowType {
+  return input.workflows[0] ?? "mixed"
+}
+
 // ---------------------------------------------------------------------------
 // Rule type
 // ---------------------------------------------------------------------------
@@ -451,6 +408,8 @@ export const ruleA_smallTeamOnTeamPlan: Rule = (input) => {
       estimatedMonthlySavings: savings,
       severity: savings >= 50 ? "high" : "medium",
       sourceRule: "A_small_team_on_team_plan",
+      confidence: "high",
+      category: "governance",
     });
   }
 
@@ -493,6 +452,8 @@ export const ruleB_premiumTierOverkill: Rule = (input) => {
       estimatedMonthlySavings: savings,
       severity: savings >= 200 ? "high" : "medium",
       sourceRule: "B_premium_tier_overkill",
+      confidence: "high",
+      category: "governance",
     });
   }
 
@@ -532,7 +493,7 @@ export const ruleC_conversationalOverlap: Rule = (input) => {
       title: `Overlapping conversational AI tools: ${toolNames}`,
       reasoning:
         `You're paying for ${activeSubs.length} general-purpose AI assistants (${toolNames}). ` +
-        `All overlap significantly for ${input.primaryUseCase} workflows. ` +
+        `All overlap significantly for ${getPrimaryWorkflow(input)} workflows. ` +
         `Combined spend: $${combinedSpend}/mo. ` +
         `Redundant spend (all but the primary tool): ~$${redundantSpend}/mo. ` +
         `Conservative savings estimate after accounting for any workflow differences: ~$${estimatedSavings}/mo. ` +
@@ -542,6 +503,8 @@ export const ruleC_conversationalOverlap: Rule = (input) => {
       estimatedMonthlySavings: estimatedSavings,
       severity: "high",
       sourceRule: "C_conversational_overlap",
+      confidence: "high",
+      category: "governance",
     },
   ];
 };
@@ -582,6 +545,8 @@ export const ruleD_codingAssistantOverlap: Rule = (input) => {
       estimatedMonthlySavings: redundantSpend,
       severity: "high",
       sourceRule: "D_coding_assistant_overlap",
+      confidence: "high",
+      category: "governance",
     },
   ];
 };
@@ -622,6 +587,8 @@ export const ruleE_lovableAndCodingIdeOverlap: Rule = (input) => {
       estimatedMonthlySavings: conservativeSavings,
       severity: "low",
       sourceRule: "E_lovable_ide_overlap",
+      confidence: "high",
+      category: "governance",
     },
   ];
 };
@@ -641,14 +608,14 @@ export const ruleF_useCaseMismatch: Rule = (input) => {
     const plan = getPlan(sub.toolId);
     if (!plan || plan.monthlyPerSeat === 0) continue; // skip free / usage-based
     if (sub.monthlySpend < 20) continue;             // not worth flagging
-    if (plan.useCaseFit.includes(input.primaryUseCase)) continue; // good fit
+    if (plan.useCaseFit.includes(getPrimaryWorkflow(input))) continue; // good fit
 
     recs.push({
       toolId: sub.toolId,
-      title: `${plan.tool} ${plan.plan} doesn't align with your primary use case (${input.primaryUseCase})`,
+      title: `${plan.tool} ${plan.plan} doesn't align with your primary use case (${getPrimaryWorkflow(input)})`,
       reasoning:
         `${plan.tool} is optimised for ${plan.useCaseFit.join(" / ")} workflows. ` +
-        `Your primary use case is "${input.primaryUseCase}", where this tool provides ` +
+        `Your primary use case is "${getPrimaryWorkflow(input)}", where this tool provides ` +
         `limited incremental value beyond tools already in your stack. ` +
         `At $${sub.monthlySpend}/mo, verify it is actively used for tasks no other ` +
         `subscription already covers — if not, cancellation recovers the full $${sub.monthlySpend}/mo.`,
@@ -656,6 +623,8 @@ export const ruleF_useCaseMismatch: Rule = (input) => {
       estimatedMonthlySavings: sub.monthlySpend,
       severity: "medium",
       sourceRule: "F_use_case_mismatch",
+      confidence: "high",
+      category: "governance",
     });
   }
 
@@ -699,6 +668,8 @@ export const ruleG_enterprisePlanOverkill: Rule = (input) => {
       estimatedMonthlySavings: savings,
       severity: savings >= 200 ? "high" : "medium",
       sourceRule: "G_enterprise_overkill",
+      confidence: "high",
+      category: "governance",
     });
   }
 
@@ -741,6 +712,8 @@ export const ruleH_apiModelOptimization: Rule = (input) => {
       estimatedMonthlySavings: potentialSavings,
       severity: potentialSavings >= 200 ? "high" : "medium",
       sourceRule: "H_api_model_optimization",
+      confidence: "high",
+      category: "governance",
     });
   }
 
@@ -780,6 +753,8 @@ export const ruleI_annualBillingOpportunity: Rule = (input) => {
       estimatedMonthlySavings: monthlySavings,
       severity: monthlySavings >= 20 ? "medium" : "low",
       sourceRule: "I_annual_billing_opportunity",
+      confidence: "high",
+      category: "governance",
     });
   }
 
@@ -797,7 +772,7 @@ export const ruleI_annualBillingOpportunity: Rule = (input) => {
 // ---------------------------------------------------------------------------
 export const ruleJ_codingToolForNonCodingTeam: Rule = (input) => {
   const NON_CODING_USE_CASES = new Set<UseCase>(["writing", "research", "data"]);
-  if (!NON_CODING_USE_CASES.has(input.primaryUseCase)) return [];
+  if (!NON_CODING_USE_CASES.has(getPrimaryWorkflow(input))) return [];
 
   const CODING_IDE_FAMILIES = new Set(["cursor", "copilot", "windsurf"]);
   const recs: AuditRecommendation[] = [];
@@ -809,18 +784,20 @@ export const ruleJ_codingToolForNonCodingTeam: Rule = (input) => {
 
     recs.push({
       toolId: sub.toolId,
-      title: `${plan.tool} — low utilisation expected for a ${input.primaryUseCase}-focused team`,
+      title: `${plan.tool} — low utilisation expected for a ${getPrimaryWorkflow(input)}-focused team`,
       reasoning:
         `${plan.tool} is an IDE-native coding assistant. Its core value is code completion, ` +
-        `debugging, and AI-assisted software development. Your primary use case is "${input.primaryUseCase}", ` +
-        `which this tool is not designed for. A ${input.primaryUseCase} team likely uses less than ` +
+        `debugging, and AI-assisted software development. Your primary use case is "${getPrimaryWorkflow(input)}", ` +
+        `which this tool is not designed for. A ${getPrimaryWorkflow(input)} team likely uses less than ` +
         `20 % of this tool's actual capabilities. At $${sub.monthlySpend}/mo, you're paying a ` +
         `coding-specialist price for a workflow that ChatGPT Plus ($20/mo) or Claude Pro ($20/mo) ` +
         `already handles at equal or lower cost.`,
-      action: `Cancel ${plan.tool} — ${input.primaryUseCase} workflows don't require an IDE coding assistant`,
+      action: `Cancel ${plan.tool} — ${getPrimaryWorkflow(input)} workflows don't require an IDE coding assistant`,
       estimatedMonthlySavings: sub.monthlySpend,
       severity: "high",
       sourceRule: "J_coding_tool_for_noncoding_team",
+      confidence: "high",
+      category: "governance",
     });
   }
 
@@ -949,11 +926,14 @@ export function generateAudit(input: AuditInput): AuditResult {
   // 5. Per-tool breakdown for the results table
   const perToolBreakdown = buildPerToolBreakdown(input, recommendations);
 
+  const optimizationScore = Math.max(0, 100 - savingsPercent);
+
   return {
     totalMonthlySpend,
     estimatedMonthlySavings,
     estimatedAnnualSavings,
     savingsPercent,
+    optimizationScore,
     perToolBreakdown,
     recommendations,
     isAlreadyOptimal: estimatedMonthlySavings < 100,

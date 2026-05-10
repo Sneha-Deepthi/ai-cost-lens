@@ -77,6 +77,20 @@ export type AuditResult = {
   isAlreadyOptimal: boolean
 
   isHighSavings: boolean
+
+  perToolBreakdown: {
+    toolId: string
+
+    displayName: string
+
+    currentMonthlySpend: number
+
+    recommendation: string
+
+    estimatedSavings: number
+
+    note: string
+  }[]
 }
 
 export type PrimaryUseCase =
@@ -105,3 +119,4 @@ export type AuditFormState = {
 
   subscriptions: SubscriptionFormItem[]
 }
+
