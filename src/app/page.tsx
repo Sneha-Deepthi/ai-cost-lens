@@ -19,7 +19,15 @@ export default function Home() {
   const [auditResult, setAuditResult] =
     useState<AuditResult | null>(null)
 
-  function handleGenerateAudit(
+    const [summary, setSummary] =
+        useState("")
+
+    const [
+      summaryLoading,
+      setSummaryLoading,
+    ] = useState(false)
+
+  async function handleGenerateAudit(
     formData: AuditFormState
   ) {
     const result = generateAudit({
@@ -33,6 +41,35 @@ export default function Home() {
     })
 
     setAuditResult(result)
+    setSummaryLoading(true)
+
+    try {
+      const response =
+        await fetch(
+          "/api/generate-summary",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify(
+              result
+            ),
+          }
+        )
+
+      const data =
+        await response.json()
+
+      setSummary(data.summary)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setSummaryLoading(false)
+    }
   }
 
   return (
@@ -50,6 +87,24 @@ export default function Home() {
       <AuditForm
         onSubmit={handleGenerateAudit}
       />
+
+      {auditResult && (
+        <div className="rounded-2xl border p-6">
+          <h2 className="text-lg font-semibold">
+            AI Audit Summary
+          </h2>
+
+          {summaryLoading ? (
+            <p className="mt-3 text-sm text-muted-foreground">
+              Generating personalized audit insights...
+            </p>
+          ) : (
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">
+              {summary}
+            </p>
+          )}
+        </div>
+      )}
 
       {auditResult && (
         <div className="mt-10 space-y-8">
