@@ -36,12 +36,19 @@ export function LeadCapture({
   const [success, setSuccess] =
     useState(false)
 
+const [website, setWebsite] =
+  useState("")
+
   async function handleSubmit(
     e: React.FormEvent
   ) {
     e.preventDefault()
 
     setLoading(true)
+
+    if (website) {
+    return
+    }
 
     const { error } =
       await supabase
@@ -172,6 +179,17 @@ export function LeadCapture({
             )
           }
           className="w-full rounded-xl border p-3"
+        />
+
+        <input
+        type="text"
+        value={website}
+        onChange={(e) =>
+            setWebsite(e.target.value)
+        }
+        className="hidden"
+        tabIndex={-1}
+        autoComplete="off"
         />
 
         <button
