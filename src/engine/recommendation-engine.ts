@@ -838,11 +838,31 @@ function buildPerToolBreakdown(
   input: AuditInput,
   recommendations: AuditRecommendation[]
 ): PerToolBreakdown[] {
-  const recByToolId = new Map(recommendations.map((r) => [r.toolId, r]));
+  
 
   return input.subscriptions.map((sub) => {
     const plan = getPlan(sub.toolId);
-    const rec = recByToolId.get(sub.toolId);
+    const directRecommendation =
+      recommendations.find(
+        (recommendation) =>
+          recommendation.toolId ===
+          sub.toolId
+      )
+
+    const overlapRecommendation =
+      recommendations.find(
+        (recommendation) =>
+          recommendation.toolId === "cross_tool" &&
+          recommendation.reasoning
+            .toLowerCase()
+            .includes(
+              toolFamily(sub.toolId)
+            )
+      )
+
+    const rec =
+      directRecommendation ||
+      overlapRecommendation
     const displayName = getDisplayName(sub.toolId);
 
     if (!rec) {

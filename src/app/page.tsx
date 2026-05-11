@@ -6,6 +6,8 @@ import { AuditForm } from "@/components/forms/audit-form"
 
 import { AuditSummary } from "@/components/audit/audit-summary"
 
+import { PerToolBreakdown } from "@/components/audit/per-tool-breakdown"
+
 import { RecommendationsList } from "@/components/audit/recommendations-list"
 
 import { MetricCard } from "@/components/dashboard/metric-card"
@@ -190,6 +192,12 @@ export default function Home() {
               }
             />
           </div>
+
+          <PerToolBreakdown
+            breakdown={
+              auditResult.perToolBreakdown
+            }
+          />
 
           {auditResult && (
             <LeadCapture
