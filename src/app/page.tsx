@@ -10,6 +10,8 @@ import { RecommendationsList } from "@/components/audit/recommendations-list"
 
 import { MetricCard } from "@/components/dashboard/metric-card"
 
+import { LeadCapture } from "@/components/lead-capture"
+
 import { generateAudit } from "@/engine/recommendation-engine"
 
 import {AuditFormState, AuditResult} from "@/types/audit"
@@ -152,6 +154,21 @@ export default function Home() {
               }
             />
           </div>
+
+          {auditResult && (
+            <LeadCapture
+              estimatedMonthlySavings={
+                auditResult.estimatedMonthlySavings
+              }
+              estimatedAnnualSavings={
+                auditResult.estimatedAnnualSavings
+              }
+              optimizationScore={
+                auditResult.optimizationScore
+              }
+            />
+          )}
+          
         </div>
       )}
     </main>
