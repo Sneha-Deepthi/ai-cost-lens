@@ -206,3 +206,61 @@
 - Implement lead capture backend
 - Add shareable public audit URLs
 - Continue dashboard UI polish
+
+## Day 6 - 2026-05-11
+
+**Hours worked:** 7
+
+**What I did:**
+- Implemented lead capture backend integration using Supabase
+- Added persistent audit lead storage with:
+  - email
+  - company name
+  - role
+  - team size
+  - savings metrics
+  - optimization score
+- Added transactional audit confirmation emails using Resend
+- Implemented conditional email messaging for:
+  - high-savings audits
+  - already-optimized audit scenarios
+- Added basic abuse protection and validation handling for lead submissions
+- Fixed Supabase REST endpoint configuration issues and insert permission errors
+- Implemented public shareable audit URLs using dynamic routing
+- Added `/audit/[id]` public audit report pages
+- Created a dedicated audit snapshot persistence flow for public sharing
+- Ensured identifying information such as:
+  - company name
+  - email address
+  are excluded from public audit reports
+- Added Open Graph and Twitter metadata support for public audit pages
+- Improved public sharing UX by:
+  - generating public audit URLs directly in the UI
+  - adding copy-to-clipboard functionality
+  - replacing browser alerts with inline success messaging
+- Added detailed per-tool audit breakdown UI showing:
+  - current spend
+  - recommendation
+  - estimated savings
+  - optimization notes
+- Improved overlap recommendation handling inside the recommendation engine so cross-tool recommendations surface correctly in the per-tool breakdown table
+- Added better empty-state handling for already-optimized audit scenarios
+- Improved public audit report layout and recommendation presentation consistency
+
+**What I learned:**
+- Separating public audit snapshots from private lead data creates a cleaner and safer sharing architecture.
+- Public sharing flows significantly improve perceived product maturity and SaaS credibility.
+- Recommendation consistency across multiple UI surfaces is important for maintaining trust in financial optimization products.
+- Small UX improvements such as inline feedback and empty-state handling substantially improve overall product quality.
+
+**Blockers / what I'm stuck on:**
+- The application still requires deployment setup, automated testing, and CI workflow configuration.
+- Documentation backlog is increasing and several required markdown deliverables are still pending.
+- Public audit pages still need additional visual polish to feel fully production-grade.
+
+**Plan for tomorrow:**
+- Add Credex conditional CTA logic
+- Configure Vercel deployment
+- Add recommendation engine unit tests
+- Configure GitHub Actions CI workflow
+- Start README.md and ARCHITECTURE.md
