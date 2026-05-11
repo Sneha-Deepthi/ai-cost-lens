@@ -23,10 +23,11 @@ export default function Home() {
     const [summary, setSummary] =
         useState("")
 
-    const [
-      summaryLoading,
-      setSummaryLoading,
-    ] = useState(false)
+    const [summaryLoading,setSummaryLoading,] = useState(false)
+
+    const [shareUrl,setShareUrl] = useState("")
+
+    const [shareMessage,setShareMessage] = useState("")
 
   async function handleGenerateAudit(
     formData: AuditFormState
@@ -70,6 +71,41 @@ export default function Home() {
       console.error(error)
     } finally {
       setSummaryLoading(false)
+    }
+  }
+
+  async function handleShareAudit() {
+    if (!auditResult) {
+      return
+    }
+
+    const response =
+      await fetch(
+        "/api/save-audit",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+
+          body: JSON.stringify(
+            auditResult
+          ),
+        }
+      )
+
+    const data =
+      await response.json()
+
+    if (data.id) {
+      const shareUrl =
+        `${window.location.origin}/audit/${data.id}`
+
+      setShareUrl(shareUrl)
+
+
     }
   }
 
@@ -168,6 +204,49 @@ export default function Home() {
               }
             />
           )}
+
+          <button
+            onClick={handleShareAudit}
+            className="rounded-xl bg-black px-6 py-3 text-white"
+          >
+            Generate Share Link
+          </button>
+          {shareUrl && (
+          <div className="rounded-2xl border bg-muted/30 p-4">
+            <p className="mb-2 text-sm font-medium">
+              Public Audit URL
+            </p>
+
+            <div className="flex items-center gap-3">
+              <input
+                value={shareUrl}
+                readOnly
+                className="flex-1 rounded-lg border bg-white px-3 py-2 text-sm"
+              />
+
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    shareUrl
+                  )
+
+                  setShareMessage(
+                    "Share link copied successfully"
+                  )
+                }}
+                className="rounded-lg bg-black px-4 py-2 text-sm text-white"
+              >
+                Copy
+              </button>
+            </div>
+          </div>
+        )}
+
+        {shareMessage && (
+          <p className="text-sm font-medium text-green-600">
+            {shareMessage}
+          </p>
+        )}
           
         </div>
       )}
