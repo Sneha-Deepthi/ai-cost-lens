@@ -75,9 +75,9 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100">
+    <main className="min-h-screen bg-linear-to-b from-slate-50 via-white to-slate-100">
       <div className="mx-auto max-w-6xl space-y-10 p-8">
-        <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 px-8 py-16 text-white shadow-2xl">
+        <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-linear-to-br from-slate-950 via-slate-900 to-slate-800 px-8 py-16 text-white shadow-2xl">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.25),transparent_35%)]" />
 
           <div className="relative mx-auto max-w-4xl text-center">
@@ -88,7 +88,7 @@ export default function Home() {
             <h1 className="mt-8 text-5xl font-black tracking-tight md:text-7xl">
               Stop Overpaying
 
-              <span className="block bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="block bg-linear-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
                 For AI Tools
               </span>
             </h1>

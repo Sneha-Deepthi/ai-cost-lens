@@ -28,7 +28,7 @@ export function AuditSummary({
         </div>
       </div>
 
-      <div className="relative overflow-hidden rounded-3xl border border-green-200 bg-gradient-to-br from-green-50 to-emerald-100 p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
+      <div className="relative overflow-hidden rounded-3xl border border-green-200 bg-linear-to-br from-green-50 to-emerald-100 p-8 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
         <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-green-200 blur-3xl" />
 
         <div className="relative">

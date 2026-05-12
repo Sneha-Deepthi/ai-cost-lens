@@ -1,25 +1,16 @@
-import { notFound }
-from "next/navigation"
+import { notFound } from "next/navigation"
 
-import { supabase }
-from "@/lib/supabase"
+import { supabase } from "@/lib/supabase"
 
-import { LeadCapture }
-from "@/components/lead-capture"
+import { LeadCapture } from "@/components/lead-capture"
 
-import { AuditSummary } from "@/components/audit/audit-summary"
+import { ShareButton } from "@/components/audit/share-button"
 
-import { ShareButton }
-from "@/components/audit/share-button"
+import { RecommendationsList } from "@/components/audit/recommendations-list"
 
-import { RecommendationsList }
-from "@/components/audit/recommendations-list"
+import { PerToolBreakdown } from "@/components/audit/per-tool-breakdown"
 
-import { PerToolBreakdown }
-from "@/components/audit/per-tool-breakdown"
-
-import { MetricCard }
-from "@/components/dashboard/metric-card"
+import { MetricCard } from "@/components/dashboard/metric-card"
 
 type Props = {
   params: Promise<{
@@ -60,9 +51,9 @@ export default async function AuditPage({
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100">
+    <main className="min-h-screen bg-linear-to-b from-slate-50 via-white to-slate-100">
       <div className="mx-auto max-w-6xl space-y-8 p-8">
-        <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 p-10 text-white shadow-2xl">
+        <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-linear-to-br from-slate-950 via-slate-900 to-slate-800 p-10 text-white shadow-2xl">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.25),transparent_35%)]" />
 
           <div className="relative">
@@ -107,7 +98,7 @@ export default async function AuditPage({
         </section>
 
         {data.estimated_monthly_savings > 500 && (
-          <section className="rounded-3xl bg-gradient-to-r from-indigo-600 to-violet-600 p-8 text-white shadow-xl">
+          <section className="rounded-3xl bg-linear-to-r from-indigo-600 to-violet-600 p-8 text-white shadow-xl">
             <p className="text-sm font-semibold uppercase tracking-wide text-indigo-100">
               High Savings Opportunity
             </p>
@@ -131,7 +122,7 @@ export default async function AuditPage({
           </section>
         )}
         {data.summary && (
-          <section className="rounded-3xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-white p-8 shadow-sm">
+          <section className="rounded-3xl border border-indigo-100 bg-linear-to-br from-indigo-50 to-white p-8 shadow-sm">
             <h2 className="text-3xl font-bold tracking-tight">
               AI Audit Summary
             </h2>
