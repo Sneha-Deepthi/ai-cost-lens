@@ -181,6 +181,67 @@ export default function Home() {
             }
           />
 
+          {auditResult.isHighSavings ? (
+            <div className="rounded-2xl border border-green-200 bg-green-50 p-6">
+              <h2 className="text-2xl font-semibold text-green-700">
+                High-Impact Savings Opportunity
+              </h2>
+
+              <p className="mt-3 text-sm leading-7 text-green-700/90">
+                This audit identified more than
+                ₹
+                {auditResult.estimatedMonthlySavings.toLocaleString()}
+                /month in potential AI tooling savings.
+
+                Credex can help optimize vendor consolidation,
+                governance controls, and AI spend allocation
+                across your stack.
+              </p>
+
+              <button
+              onClick={() => {
+                document
+                  .getElementById(
+                    "lead-capture"
+                  )
+                  ?.scrollIntoView({
+                    behavior: "smooth",
+                  })
+              }}
+              className="mt-5 rounded-xl bg-green-700 px-5 py-3 text-sm font-medium text-white">
+                Book Credex Consultation
+              </button>
+            </div>
+          ) : auditResult.isAlreadyOptimal ? (
+            <div className="rounded-2xl border border-blue-200 bg-blue-50 p-6">
+              <h2 className="text-2xl font-semibold text-blue-700">
+                Your Stack Looks Well Optimized
+              </h2>
+
+              <p className="mt-3 text-sm leading-7 text-blue-700/90">
+                No major overspend or redundant tooling
+                was detected in this audit.
+
+                Your current AI subscriptions appear
+                aligned with your team's workflow needs.
+              </p>
+
+              <button
+              onClick={() => {
+                document
+                  .getElementById(
+                    "lead-capture"
+                  )
+                  ?.scrollIntoView({
+                    behavior: "smooth",
+                  })
+              }}
+              className="mt-5 rounded-xl bg-blue-700 px-5 py-3 text-sm font-medium text-white">
+                Notify Me About Future Optimizations
+              </button>
+            </div>
+          ) : null}
+
           <div>
             <h2 className="mb-4 text-2xl font-semibold">
               Recommendations
@@ -200,17 +261,19 @@ export default function Home() {
           />
 
           {auditResult && (
-            <LeadCapture
-              estimatedMonthlySavings={
-                auditResult.estimatedMonthlySavings
-              }
-              estimatedAnnualSavings={
-                auditResult.estimatedAnnualSavings
-              }
-              optimizationScore={
-                auditResult.optimizationScore
-              }
-            />
+            <div id="lead-capture">
+              <LeadCapture
+                estimatedMonthlySavings={
+                  auditResult.estimatedMonthlySavings
+                }
+                estimatedAnnualSavings={
+                  auditResult.estimatedAnnualSavings
+                }
+                optimizationScore={
+                  auditResult.optimizationScore
+                }
+              />
+            </div>
           )}
 
           <button
