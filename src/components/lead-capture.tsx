@@ -106,7 +106,7 @@ const [website, setWebsite] =
 
   if (success) {
     return (
-      <div className="rounded-3xl border bg-white p-8 shadow-sm">
+      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-xl">
         <h3 className="text-2xl font-bold">
           Audit submitted successfully
         </h3>

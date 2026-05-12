@@ -4,14 +4,6 @@ from "next/navigation"
 import { supabase }
 from "@/lib/supabase"
 
-import { LeadCapture }
-from "@/components/lead-capture"
-
-import { AuditSummary } from "@/components/audit/audit-summary"
-
-import { ShareButton }
-from "@/components/audit/share-button"
-
 import { RecommendationsList }
 from "@/components/audit/recommendations-list"
 
@@ -33,16 +25,45 @@ export async function generateMetadata({
   const { id } =
     await params
 
+  const shareUrl =
+    `${process.env.NEXT_PUBLIC_APP_URL}/share/${id}`
+
   return {
     title:
       "AI Spend Audit Report",
 
     description:
-      `Public audit report ${id}`,
+      "See how much this team could save on AI tooling using AI Cost Lens.",
+
+    openGraph: {
+      title:
+        "AI Spend Audit Report",
+
+      description:
+        "See how much this team could save on AI tooling using AI Cost Lens.",
+
+      url: shareUrl,
+
+      siteName:
+        "AI Cost Lens",
+
+      type: "website",
+    },
+
+    twitter: {
+      card:
+        "summary_large_image",
+
+      title:
+        "AI Spend Audit Report",
+
+      description:
+        "See how much this team could save on AI tooling using AI Cost Lens.",
+    },
   }
 }
 
-export default async function AuditPage({
+export default async function SharePage({
   params,
 }: Props) {
   const { id } =
@@ -76,6 +97,10 @@ export default async function AuditPage({
 
             <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-300">
               Public optimization report generated with AI Cost Lens.
+            </p>
+
+            <p className="mt-6 text-sm text-slate-400">
+              Publicly shareable AI tooling optimization report.
             </p>
           </div>
         </section>
@@ -121,15 +146,9 @@ export default async function AuditPage({
             <p className="mt-4 max-w-2xl text-indigo-100">
               Credex helps startups optimize AI infrastructure spend through discounted AI credits and tooling recommendations.
             </p>
-
-            <a
-              href="#lead-capture"
-              className="mt-6 inline-flex rounded-2xl bg-white px-6 py-3 font-semibold text-indigo-700 shadow-lg transition-all hover:scale-[1.02]"
-            >
-              Book Credex Consultation
-            </a>
           </section>
         )}
+
         {data.summary && (
           <section className="rounded-3xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-white p-8 shadow-sm">
             <h2 className="text-3xl font-bold tracking-tight">
@@ -159,27 +178,24 @@ export default async function AuditPage({
         </section>
 
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-wrap items-center gap-4">
-            <ShareButton auditId={id} />
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h3 className="text-xl font-semibold">
+                Share this audit report
+              </h3>
 
-            <p className="text-sm text-slate-500">
-              Share this public audit report with your team.
-            </p>
+              <p className="mt-1 text-sm text-slate-500">
+                Send this public optimization report to your team.
+              </p>
+            </div>
+
+            <a
+              href={`/audit/${id}`}
+              className="rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:scale-[1.02]"
+            >
+              Explore Full Audit
+            </a>
           </div>
-        </section>
-
-        <section id="lead-capture">
-          <LeadCapture
-            estimatedMonthlySavings={
-              data.estimated_monthly_savings
-            }
-            estimatedAnnualSavings={
-              data.estimated_annual_savings
-            }
-            optimizationScore={
-              data.optimization_score
-            }
-          />
         </section>
 
         <footer className="pb-10 pt-2 text-center">

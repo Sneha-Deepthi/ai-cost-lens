@@ -1,35 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 import { AuditForm } from "@/components/forms/audit-form"
 
-import { AuditSummary } from "@/components/audit/audit-summary"
-
-import { PerToolBreakdown } from "@/components/audit/per-tool-breakdown"
-
-import { RecommendationsList } from "@/components/audit/recommendations-list"
-
-import { MetricCard } from "@/components/dashboard/metric-card"
-
-import { LeadCapture } from "@/components/lead-capture"
-
 import { generateAudit } from "@/engine/recommendation-engine"
 
-import {AuditFormState, AuditResult} from "@/types/audit"
+import { AuditFormState } from "@/types/audit"
 
 export default function Home() {
-  const [auditResult, setAuditResult] =
-    useState<AuditResult | null>(null)
-
-    const [summary, setSummary] =
-        useState("")
-
-    const [summaryLoading,setSummaryLoading,] = useState(false)
-
-    const [shareUrl,setShareUrl] = useState("")
-
-    const [shareMessage,setShareMessage] = useState("")
+  const router = useRouter()
 
   async function handleGenerateAudit(
     formData: AuditFormState
@@ -39,51 +19,17 @@ export default function Home() {
 
       teamSize: formData.teamSize,
 
-      workflows: [formData.primaryUseCase],
+      workflows: [
+        formData.primaryUseCase,
+      ],
 
-      subscriptions: formData.subscriptions,
+      subscriptions:
+        formData.subscriptions,
     })
 
-    setAuditResult(result)
-    setSummaryLoading(true)
-
-    try {
-      const response =
-        await fetch(
-          "/api/generate-summary",
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify(
-              result
-            ),
-          }
-        )
-
-      const data =
-        await response.json()
-
-      setSummary(data.summary)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setSummaryLoading(false)
-    }
-  }
-
-  async function handleShareAudit() {
-    if (!auditResult) {
-      return
-    }
-
-    const response =
+    const summaryResponse =
       await fetch(
-        "/api/save-audit",
+        "/api/generate-summary",
         {
           method: "POST",
 
@@ -92,235 +38,97 @@ export default function Home() {
               "application/json",
           },
 
-          body: JSON.stringify(
-            auditResult
-          ),
+          body: JSON.stringify(result),
         }
       )
+
+    const summaryData =
+      await summaryResponse.json()
+
+    const response = await fetch(
+      "/api/save-audit",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify({
+          ...result,
+
+          summary:
+            summaryData.summary,
+        }),
+      }
+    )
 
     const data =
       await response.json()
 
     if (data.id) {
-      const shareUrl =
-        `${window.location.origin}/audit/${data.id}`
-
-      setShareUrl(shareUrl)
-
-
+      router.push(
+        `/audit/${data.id}`
+      )
     }
   }
 
   return (
-    <main className="mx-auto max-w-6xl p-8">
-      <div className="mb-10">
-        <h1 className="text-4xl font-bold">
-          AI Cost Lens
-        </h1>
+    <main className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100">
+      <div className="mx-auto max-w-6xl space-y-10 p-8">
+        <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 px-8 py-16 text-white shadow-2xl">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.25),transparent_35%)]" />
 
-        <p className="mt-2 text-muted-foreground">
-          Audit AI subscription spend and identify optimization opportunities.
-        </p>
+          <div className="relative mx-auto max-w-4xl text-center">
+            <div className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium backdrop-blur">
+              Free AI Spend Audit
+            </div>
+
+            <h1 className="mt-8 text-5xl font-black tracking-tight md:text-7xl">
+              Stop Overpaying
+
+              <span className="block bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+                For AI Tools
+              </span>
+            </h1>
+
+            <p className="mx-auto mt-8 max-w-2xl text-lg leading-8 text-slate-300 md:text-xl">
+              Instantly audit your AI tooling stack,
+              uncover overlapping subscriptions,
+              and identify optimization opportunities
+              across ChatGPT, Claude, Cursor,
+              Gemini, Copilot, and more.
+            </p>
+
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 backdrop-blur">
+                <p className="text-sm text-slate-400">
+                  Supported Platforms
+                </p>
+
+                <p className="mt-1 font-semibold">
+                  ChatGPT · Claude · Cursor · Gemini
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 backdrop-blur">
+                <p className="text-sm text-slate-400">
+                  No Login Required
+                </p>
+
+                <p className="mt-1 font-semibold">
+                  Instant Audit Results
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <AuditForm
+          onSubmit={handleGenerateAudit}
+        />
       </div>
-
-      <AuditForm
-        onSubmit={handleGenerateAudit}
-      />
-
-      {auditResult && (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <MetricCard
-            title="Monthly Spend"
-            value={`₹${auditResult.totalMonthlySpend.toLocaleString()}`}
-          />
-
-          <MetricCard
-            title="Estimated Monthly Savings"
-            value={`₹${auditResult.estimatedMonthlySavings.toLocaleString()}`}
-          />
-
-          <MetricCard
-            title="Estimated Annual Savings"
-            value={`₹${auditResult.estimatedAnnualSavings.toLocaleString()}`}
-          />
-
-          <MetricCard
-            title="Optimization Score"
-            value={`${auditResult.optimizationScore}/100`}
-            subtitle="Higher is better"
-          />
-        </div>
-      )}
-
-      {auditResult && (
-        <div className="rounded-2xl border p-6">
-          <h2 className="text-lg font-semibold">
-            AI Audit Summary
-          </h2>
-
-          {summaryLoading ? (
-            <p className="mt-3 text-sm text-muted-foreground">
-              Generating personalized audit insights...
-            </p>
-          ) : (
-            <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              {summary}
-            </p>
-          )}
-        </div>
-      )}
-
-      {auditResult && (
-        <div className="mt-10 space-y-8">
-          <AuditSummary
-            totalMonthlySpend={
-              auditResult.totalMonthlySpend
-            }
-            estimatedMonthlySavings={
-              auditResult.estimatedMonthlySavings
-            }
-          />
-
-          {auditResult.isHighSavings ? (
-            <div className="rounded-2xl border border-green-200 bg-green-50 p-6">
-              <h2 className="text-2xl font-semibold text-green-700">
-                High-Impact Savings Opportunity
-              </h2>
-
-              <p className="mt-3 text-sm leading-7 text-green-700/90">
-                This audit identified more than
-                ₹
-                {auditResult.estimatedMonthlySavings.toLocaleString()}
-                /month in potential AI tooling savings.
-
-                Credex can help optimize vendor consolidation,
-                governance controls, and AI spend allocation
-                across your stack.
-              </p>
-
-              <button
-              onClick={() => {
-                document
-                  .getElementById(
-                    "lead-capture"
-                  )
-                  ?.scrollIntoView({
-                    behavior: "smooth",
-                  })
-              }}
-              className="mt-5 rounded-xl bg-green-700 px-5 py-3 text-sm font-medium text-white">
-                Book Credex Consultation
-              </button>
-            </div>
-          ) : auditResult.isAlreadyOptimal ? (
-            <div className="rounded-2xl border border-blue-200 bg-blue-50 p-6">
-              <h2 className="text-2xl font-semibold text-blue-700">
-                Your Stack Looks Well Optimized
-              </h2>
-
-              <p className="mt-3 text-sm leading-7 text-blue-700/90">
-                No major overspend or redundant tooling
-                was detected in this audit.
-
-                Your current AI subscriptions appear
-                aligned with your team's workflow needs.
-              </p>
-
-              <button
-              onClick={() => {
-                document
-                  .getElementById(
-                    "lead-capture"
-                  )
-                  ?.scrollIntoView({
-                    behavior: "smooth",
-                  })
-              }}
-              className="mt-5 rounded-xl bg-blue-700 px-5 py-3 text-sm font-medium text-white">
-                Notify Me About Future Optimizations
-              </button>
-            </div>
-          ) : null}
-
-          <div>
-            <h2 className="mb-4 text-2xl font-semibold">
-              Recommendations
-            </h2>
-
-            <RecommendationsList
-              recommendations={
-                auditResult.recommendations
-              }
-            />
-          </div>
-
-          <PerToolBreakdown
-            breakdown={
-              auditResult.perToolBreakdown
-            }
-          />
-
-          {auditResult && (
-            <div id="lead-capture">
-              <LeadCapture
-                estimatedMonthlySavings={
-                  auditResult.estimatedMonthlySavings
-                }
-                estimatedAnnualSavings={
-                  auditResult.estimatedAnnualSavings
-                }
-                optimizationScore={
-                  auditResult.optimizationScore
-                }
-              />
-            </div>
-          )}
-
-          <button
-            onClick={handleShareAudit}
-            className="rounded-xl bg-black px-6 py-3 text-white"
-          >
-            Generate Share Link
-          </button>
-          {shareUrl && (
-          <div className="rounded-2xl border bg-muted/30 p-4">
-            <p className="mb-2 text-sm font-medium">
-              Public Audit URL
-            </p>
-
-            <div className="flex items-center gap-3">
-              <input
-                value={shareUrl}
-                readOnly
-                className="flex-1 rounded-lg border bg-white px-3 py-2 text-sm"
-              />
-
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(
-                    shareUrl
-                  )
-
-                  setShareMessage(
-                    "Share link copied successfully"
-                  )
-                }}
-                className="rounded-lg bg-black px-4 py-2 text-sm text-white"
-              >
-                Copy
-              </button>
-            </div>
-          </div>
-        )}
-
-        {shareMessage && (
-          <p className="text-sm font-medium text-green-600">
-            {shareMessage}
-          </p>
-        )}
-          
-        </div>
-      )}
     </main>
   )
 }

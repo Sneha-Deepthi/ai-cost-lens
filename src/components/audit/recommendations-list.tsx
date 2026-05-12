@@ -11,8 +11,8 @@ export function RecommendationsList({
 }: Props) {
   if (recommendations.length === 0) {
     return (
-      <div className="rounded-2xl border p-6 text-center">
-        <h3 className="text-lg font-semibold">
+      <div className="rounded-3xl border border-green-200 bg-green-50 p-10 text-center shadow-sm">
+        <h3 className="text-2xl font-bold text-green-700">
           No optimization opportunities detected
         </h3>
 

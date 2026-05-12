@@ -18,6 +18,7 @@ export async function POST(
       optimizationScore,
       recommendations,
       perToolBreakdown,
+      summary,
     } = body
 
     const { data, error } =
@@ -41,6 +42,9 @@ export async function POST(
 
             per_tool_breakdown:
               perToolBreakdown,
+
+            summary,
+            
           },
         ])
         .select()

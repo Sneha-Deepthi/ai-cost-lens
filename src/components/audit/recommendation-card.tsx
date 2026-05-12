@@ -15,7 +15,7 @@ export function RecommendationCard({
   recommendation,
 }: Props) {
   return (
-    <div className="rounded-2xl border p-5 hover:shadow-sm transition-shadow">
+    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <div className="flex items-center gap-2">
@@ -44,7 +44,7 @@ export function RecommendationCard({
             Savings
           </p>
 
-          <p className="font-bold text-green-600">
+          <p className="text-2xl font-black tracking-tight text-green-600">
             ₹
             {recommendation.estimatedMonthlySavings.toLocaleString()}
 

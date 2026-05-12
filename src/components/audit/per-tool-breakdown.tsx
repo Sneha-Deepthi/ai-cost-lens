@@ -18,7 +18,7 @@ export function PerToolBreakdown({
   breakdown,
 }: Props) {
   return (
-    <div className="rounded-2xl border p-6">
+    <div className="rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm backdrop-blur-sm">
       <div className="mb-6">
         <h2 className="text-2xl font-semibold">
           Per-Tool Breakdown

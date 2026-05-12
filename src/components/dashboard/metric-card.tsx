@@ -12,7 +12,7 @@ export function MetricCard({
   subtitle,
 }: Props) {
   return (
-    <div className="rounded-2xl border p-6">
+    <div className="rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm backdrop-blur-sm">
       <p className="text-sm text-muted-foreground">
         {title}
       </p>

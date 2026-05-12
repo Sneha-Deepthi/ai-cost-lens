@@ -154,7 +154,7 @@ export function AuditForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-8 rounded-2xl border p-6"
+      className="space-y-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm"
     >
       <div className="grid gap-4 md:grid-cols-2">
         <div>
@@ -255,7 +255,7 @@ export function AuditForm({
           (subscription, index) => (
             <div
               key={subscription.id}
-              className="grid gap-4 rounded-xl border p-4 md:grid-cols-4"
+              className="grid gap-4 rounded-2xl border border-slate-200 bg-slate-50/60 p-5 transition-all hover:bg-white hover:shadow-md md:grid-cols-4"
             >
               <div>
                 <label className="mb-2 block text-sm">
