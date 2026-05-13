@@ -270,6 +270,7 @@
 **Hours worked:** 9
 
 **What I did:**
+- Deployed the application using Vercel
 - Refactored the application flow into three separate experiences:
   - homepage (`/`)
   - interactive audit page (`/audit/[id]`)

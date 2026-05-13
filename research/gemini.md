@@ -49,7 +49,7 @@ A major advantage of Gemini is its deep integration with:
 ## Pro
 
 Price:
-- ₹1,950/month in India
+- $1,950/month in India
 
 Approximate Global Pricing:
 - around $20/month
@@ -83,7 +83,7 @@ Potential Audit Insights:
 ## Ultra
 
 Price:
-- ₹24,500/month in India
+- $24,500/month in India
 
 Approximate Global Pricing:
 - premium enterprise-tier pricing

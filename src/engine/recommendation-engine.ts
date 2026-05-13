@@ -230,7 +230,7 @@ export const PLAN_CATALOGUE: Record<string, PlanEntry> = {
 
   // ── Gemini ──────────────────────────────────────────────────────────────────
   // Source: https://gemini.google/subscriptions/  — verified May 2026
-  // Ultra price: ₹24,500/mo ≈ $295 USD — rounded to $300
+  // Ultra price: $24,500/mo ≈ $295 USD — rounded to $300
   gemini_pro: {
     tool: "Gemini",
     plan: "Pro",
@@ -364,6 +364,43 @@ function getPrimaryWorkflow(
   return input.workflows[0] ?? "mixed"
 }
 
+function getBestAlternativeTool(
+  workflow: WorkflowType
+) {
+  switch (workflow) {
+    case "coding":
+      return [
+        "copilot_individual",
+        "cursor_pro",
+        "windsurf_pro",
+      ];
+
+    case "writing":
+      return [
+        "chatgpt_plus",
+        "claude_pro",
+      ];
+
+    case "research":
+      return [
+        "claude_pro",
+        "chatgpt_plus",
+        "gemini_pro",
+      ];
+
+    case "data":
+      return [
+        "chatgpt_plus",
+        "gemini_pro",
+      ];
+
+    default:
+      return [
+        "chatgpt_plus",
+      ];
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Rule type
 // ---------------------------------------------------------------------------
@@ -436,15 +473,25 @@ export const ruleB_premiumTierOverkill: Rule = (input) => {
       : null;
     if (!downgradePlan) continue;
 
-    const savings = (plan.monthlyPerSeat - downgradePlan.monthlyPerSeat) * sub.seats;
+    const downgradeCost =
+      downgradePlan.monthlyPerSeat *
+      sub.seats;
+
+    const savings =
+      Math.max(
+        0,
+        sub.monthlySpend -
+          downgradeCost
+      );
     if (savings <= 0) continue;
 
     recs.push({
       toolId: sub.toolId,
       title: `${plan.tool} ${plan.plan} — confirm you're consistently hitting ${downgradePlan.plan} limits`,
       reasoning:
-        `${plan.plan} costs $${plan.monthlyPerSeat}/mo vs $${downgradePlan.monthlyPerSeat}/mo ` +
-        `for ${plan.tool} ${downgradePlan.plan} — a $${plan.monthlyPerSeat - downgradePlan.monthlyPerSeat}/mo premium. ` +
+        `You're currently spending approximately $${sub.monthlySpend}/mo on ${plan.tool} ${plan.plan}. ` +
+        `${downgradePlan.plan} pricing is approximately $${downgradeCost}/mo for ${sub.seats} seat(s), ` +
+        `creating a potential savings opportunity of about $${savings}/mo. ` +
         `This tier is cost-justified only when you routinely exhaust ${downgradePlan.plan}'s usage caps. ` +
         `If you haven't hit those caps in the past 30 days, downgrading saves ` +
         `$${savings}/mo with no change in output quality.`,
@@ -805,6 +852,206 @@ export const ruleJ_codingToolForNonCodingTeam: Rule = (input) => {
 };
 
 // ---------------------------------------------------------------------------
+// RULE K — Subscription pricing mismatch
+// ---------------------------------------------------------------------------
+// Compare reported spend vs expected vendor pricing.
+// Helps detect:
+// - pricing misconfiguration
+// - overpayment
+// - incorrect plan assumptions
+// - annual billing inconsistencies
+// ---------------------------------------------------------------------------
+
+export const ruleK_pricingMismatch: Rule = (input) => {
+  const recs: AuditRecommendation[] = [];
+
+  for (const sub of input.subscriptions) {
+    const plan = getPlan(sub.toolId);
+
+    if (!plan) continue;
+
+    // Skip usage-based API plans
+    if (sub.toolId.endsWith("_api")) continue;
+
+    const expectedSpend =
+      plan.monthlyPerSeat * sub.seats;
+
+    // Ignore free plans
+    if (expectedSpend === 0) continue;
+
+    const difference =
+      sub.monthlySpend -
+      expectedSpend;
+
+    const differencePercent =
+      Math.abs(difference) /
+      expectedSpend;
+
+    // Ignore tiny mismatches
+    if (differencePercent < 0.2)
+      continue;
+
+    // User paying MORE than expected
+    if (difference > 0) {
+      recs.push({
+        toolId: sub.toolId,
+
+        title:
+          `${plan.tool} pricing appears higher than expected`,
+
+        reasoning:
+          `Based on official pricing, ${plan.tool} ${plan.plan} should cost approximately ` +
+          `$${expectedSpend}/mo for ${sub.seats} seat(s) ` +
+          `($${plan.monthlyPerSeat}/seat). ` +
+          `Your reported spend is $${sub.monthlySpend}/mo, which is ~$${difference}/mo higher than expected. ` +
+          `This may indicate unnecessary add-ons, duplicate billing, unused seats, or incorrect plan allocation.`,
+
+        action:
+          `Review ${plan.tool} billing configuration and active seat allocation`,
+
+        estimatedMonthlySavings:
+          Math.round(difference),
+
+        severity:
+          difference >= 100
+            ? "high"
+            : "medium",
+
+        sourceRule:
+          "K_pricing_mismatch",
+
+        confidence: "medium",
+
+        category: "billing",
+      });
+    }
+
+    // User paying LESS than expected
+    else {
+      recs.push({
+        toolId: sub.toolId,
+
+        title:
+          `${plan.tool} spend differs from standard pricing`,
+
+        reasoning:
+          `Official pricing for ${plan.tool} ${plan.plan} is approximately ` +
+          `$${expectedSpend}/mo for ${sub.seats} seat(s), but your reported spend is ` +
+          `$${sub.monthlySpend}/mo. ` +
+          `This may reflect annual billing discounts, promotional credits, regional pricing, or inconsistent reporting.`,
+
+        action:
+          `Verify billing accuracy and pricing assumptions`,
+
+        estimatedMonthlySavings: 0,
+
+        severity: "low",
+
+        sourceRule:
+          "K_pricing_mismatch",
+
+        confidence: "low",
+
+        category: "billing",
+      });
+    }
+  }
+
+  return recs;
+};
+
+// ---------------------------------------------------------------------------
+// RULE L — Cheaper better-fit alternative exists
+// ---------------------------------------------------------------------------
+
+export const ruleL_betterAlternativeExists: Rule = (
+  input
+) => {
+  const recs: AuditRecommendation[] = [];
+
+  const workflow =
+    getPrimaryWorkflow(input);
+
+  const alternatives =
+    getBestAlternativeTool(
+      workflow
+    );
+
+  for (const sub of input.subscriptions) {
+    const currentPlan =
+      getPlan(sub.toolId);
+
+    if (!currentPlan) continue;
+
+    if (
+      currentPlan.useCaseFit.includes(
+        workflow
+      )
+    ) {
+      continue;
+    }
+
+    for (const altToolId of alternatives) {
+      const altPlan =
+        getPlan(altToolId);
+
+      if (!altPlan) continue;
+
+      const altCost =
+        altPlan.monthlyPerSeat *
+        sub.seats;
+
+      if (
+        altCost >=
+        sub.monthlySpend
+      ) {
+        continue;
+      }
+
+      const savings =
+        sub.monthlySpend -
+        altCost;
+
+      recs.push({
+        toolId: sub.toolId,
+
+        title:
+          `${altPlan.tool} may be a better fit than ${currentPlan.tool}`,
+
+        reasoning:
+          `${currentPlan.tool} is not strongly optimized for ${workflow} workflows. ` +
+          `${altPlan.tool} ${altPlan.plan} aligns more closely with your primary workflow and would cost approximately ` +
+          `$${altCost}/mo for ${sub.seats} seat(s) instead of your current ` +
+          `$${sub.monthlySpend}/mo spend. ` +
+          `Potential savings: ~$${savings}/mo while maintaining similar or better workflow alignment.`,
+
+        action:
+          `Evaluate replacing ${currentPlan.tool} with ${altPlan.tool} ${altPlan.plan}`,
+
+        estimatedMonthlySavings:
+          Math.round(savings),
+
+        severity:
+          savings >= 100
+            ? "high"
+            : "medium",
+
+        sourceRule:
+          "L_better_alternative",
+
+        confidence: "medium",
+
+        category: "api-optimization",
+      });
+
+      break;
+    }
+  }
+
+  return recs;
+};
+
+// ---------------------------------------------------------------------------
 // De-duplication
 // ---------------------------------------------------------------------------
 // If multiple rules fire on the same toolId, keep only the recommendation with
@@ -907,6 +1154,8 @@ const ALL_RULES: Rule[] = [
   ruleH_apiModelOptimization,
   ruleI_annualBillingOpportunity,
   ruleJ_codingToolForNonCodingTeam,
+  ruleK_pricingMismatch,
+  ruleL_betterAlternativeExists,
 ];
 
 export function generateAudit(input: AuditInput): AuditResult {
@@ -930,11 +1179,7 @@ export function generateAudit(input: AuditInput): AuditResult {
     0
   );
 
-  // Cap at 90 % of total spend — an audit should never claim to eliminate all AI costs
-  const estimatedMonthlySavings = Math.min(
-    rawMonthlySavings,
-    Math.round(totalMonthlySpend * 0.9)
-  );
+  const estimatedMonthlySavings =rawMonthlySavings
 
   const estimatedAnnualSavings = estimatedMonthlySavings * 12;
 

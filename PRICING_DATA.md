@@ -1,9 +1,10 @@
 # PRICING_DATA.md
 
-Every number used in the recommendation engine traces to a vendor's official pricing page.
+Every number used in the recommendation engine traces to an official vendor pricing page.
 
-Verified: 2026-05-07  
-Last Updated: 2026-05-08
+All pricing values were verified against official pricing documentation between:
+- 2026-05-06
+- 2026-05-08
 
 All prices are normalized into approximate monthly USD equivalents where required.
 
@@ -11,9 +12,12 @@ Pricing may change over time as vendors update public plans and enterprise offer
 
 ---
 
-## Cursor
+# Cursor
 
-Source: https://cursor.com/pricing
+Official Pricing Source:  
+https://cursor.com/pricing
+
+Verified: 2026-05-07
 
 | Plan | Price | Billing |
 |---|---|---|
@@ -23,16 +27,20 @@ Source: https://cursor.com/pricing
 | Enterprise | Custom (floor estimate: $60/user/month used in engine) | Custom |
 
 Notes:
-- Hobby plan has limited AI requests; not viable for professional daily use.
+- Hobby plan has limited AI requests and is not viable for professional daily usage.
 - Teams adds RBAC, SAML/OIDC SSO, shared chats, usage analytics, and centralized billing.
 - Enterprise adds audit logs, SCIM, invoice billing, and priority support.
+- Enterprise pricing is not publicly disclosed; conservative internal estimation values are used in the engine.
 - No annual discount documented on the public pricing page as of verification date.
 
 ---
 
-## GitHub Copilot
+# GitHub Copilot
 
-Source: https://github.com/features/copilot/plans
+Official Pricing Source:  
+https://github.com/features/copilot/plans
+
+Verified: 2026-05-07
 
 | Plan | Price | Billing |
 |---|---|---|
@@ -48,9 +56,12 @@ Notes:
 
 ---
 
-## Claude
+# Claude
 
-Source: https://claude.com/pricing
+Official Pricing Source:  
+https://claude.com/pricing
+
+Verified: 2026-05-07
 
 | Plan | Monthly Price | Annual Price (per seat/month) |
 |---|---|---|
@@ -67,11 +78,15 @@ Notes:
 - Team Standard annual billing saves $5/seat/month ($60/seat/year).
 - Team Premium annual billing saves $25/seat/month ($300/seat/year).
 - Max is designed for users who consistently exhaust Pro usage caps.
+- Enterprise pricing is not publicly disclosed; conservative internal estimation values are used in the engine.
 - Enterprise adds SCIM, audit logs, compliance APIs, role-based permissions, and admin spend controls.
 
-### Claude API Pricing
+## Claude API Pricing
 
-Source: https://claude.com/pricing#api
+Official Pricing Source:  
+https://claude.com/pricing#api
+
+Verified: 2026-05-07
 
 | Model | Input | Output |
 |---|---|---|
@@ -88,9 +103,12 @@ Notes:
 
 ---
 
-## ChatGPT
+# ChatGPT
 
-Source: https://chatgpt.com/pricing
+Official Pricing Source:  
+https://chatgpt.com/pricing
+
+Verified: 2026-05-07
 
 | Plan | Monthly Price | Annual Price (per seat/month) |
 |---|---|---|
@@ -102,11 +120,15 @@ Source: https://chatgpt.com/pricing
 Notes:
 - Team annual billing saves $5/seat/month ($60/seat/year).
 - Team adds shared workspaces, centralized billing, admin controls, SAML SSO, and GPT analytics.
+- Enterprise pricing is not publicly disclosed; conservative internal estimation values are used in the engine.
 - Enterprise adds SCIM, compliance tooling, regional data controls, and advanced governance features.
 
-### OpenAI API Pricing
+## OpenAI API Pricing
 
-Source: https://openai.com/api/pricing/
+Official Pricing Source:  
+https://openai.com/api/pricing/
+
+Verified: 2026-05-07
 
 Notes:
 - API pricing is usage-based and varies significantly by model tier.
@@ -115,17 +137,25 @@ Notes:
 
 ---
 
-## Gemini
+# Gemini
 
-Source: https://gemini.google/subscriptions/
+Official Pricing Source:  
+https://gemini.google/subscriptions/
+
+Verified: 2026-05-07
+
+Prices converted to approximate USD equivalents where applicable.
 
 | Plan | Price | Notes |
 |---|---|---|
-| Pro | ~$20/month (₹1,950/month in India) | Individual |
-| Ultra | ~$300/month (₹24,500/month in India) | Heavy multimodal usage |
+| Pro | ~$20/month ($1,950/month in India) | Individual |
+| Ultra | ~$300/month ($24,500/month in India) | Heavy multimodal usage |
 | API Direct | Usage-based | See Google AI Dev pricing |
 
-Source (API): https://ai.google.dev/gemini-api/docs/pricing
+Official API Pricing Source:  
+https://ai.google.dev/gemini-api/docs/pricing
+
+Verified: 2026-05-07
 
 Notes:
 - Gemini Ultra pricing converted using approximate exchange-rate normalization.
@@ -134,9 +164,12 @@ Notes:
 
 ---
 
-## Windsurf
+# Windsurf
 
-Source: https://windsurf.com/pricing
+Official Pricing Source:  
+https://windsurf.com/pricing
+
+Verified: 2026-05-07
 
 | Plan | Price | Billing |
 |---|---|---|
@@ -150,14 +183,18 @@ Notes:
 - Pro includes expanded Cascade AI usage and agentic coding workflows.
 - Teams adds centralized billing, collaboration tooling, and admin workflows.
 - Max is designed for extremely high AI usage environments.
+- Enterprise pricing is not publicly disclosed; conservative internal estimation values are used in the engine.
 - Enterprise includes SSO, RBAC, and advanced governance tooling.
 - Windsurf pricing marked as approximate due to evolving public pricing information.
 
 ---
 
-## Lovable
+# Lovable
 
-Source: https://lovable.dev/pricing
+Official Pricing Source:  
+https://lovable.dev/pricing
+
+Verified: 2026-05-07
 
 | Plan | Price | Credits |
 |---|---|---|
@@ -174,9 +211,9 @@ Notes:
 
 ---
 
-## Engine Estimation Methodology
+# Engine Estimation Methodology
 
-### Enterprise Plan Floor Estimates
+## Enterprise Plan Floor Estimates
 
 Several vendors do not publicly disclose exact enterprise pricing.
 
@@ -190,9 +227,9 @@ These values are intentionally conservative to avoid exaggerated savings project
 
 ---
 
-### Redundant Subscription Savings
+## Redundant Subscription Savings
 
-#### Conversational AI Overlap
+### Conversational AI Overlap
 
 Applies to:
 - ChatGPT
@@ -203,7 +240,9 @@ The engine assumes:
 - 60% of overlapping spend may be recoverable
 - 40% operational overlap buffer remains for legitimate workflow differences
 
-#### Coding Assistant Overlap
+---
+
+### Coding Assistant Overlap
 
 Applies to:
 - Cursor
@@ -216,7 +255,7 @@ The engine assumes:
 
 ---
 
-### API Model Routing Savings
+## API Model Routing Savings
 
 API optimization recommendations are triggered when:
 - monthly API spend exceeds operational thresholds
@@ -227,7 +266,7 @@ The engine assumes:
 
 ---
 
-### Annual Billing Savings
+## Annual Billing Savings
 
 Documented annual discounts currently modeled:
 
@@ -240,7 +279,7 @@ Documented annual discounts currently modeled:
 
 ---
 
-### Savings Cap
+## Savings Cap
 
 Total estimated savings are capped at 90% of total monthly spend.
 
@@ -251,7 +290,7 @@ The engine intentionally avoids unrealistic:
 
 ---
 
-## Recommendation Engine Philosophy
+# Recommendation Engine Philosophy
 
 The recommendation engine is designed to produce:
 - explainable recommendations
@@ -266,3 +305,5 @@ The engine intentionally favors:
 - workflow-aware optimization
 - pricing traceability
 - transparent financial assumptions
+
+---

@@ -41,7 +41,7 @@ It supports both subscription-based plans and developer-focused API usage.
 ## Plus
 
 Price:
-- ₹1,999/month in India
+- $1,999/month in India
 - Approximately $20/month globally
 
 Best For:
@@ -76,7 +76,7 @@ Potential Audit Insights:
 ## Team / Business
 
 Price:
-- approximately ₹1,800/user/month
+- approximately $1,800/user/month
 - approximately $25/user/month annually
 - approximately $30/user/month monthly
 

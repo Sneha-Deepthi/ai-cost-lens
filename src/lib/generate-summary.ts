@@ -1,7 +1,7 @@
 import OpenAI from "openai"
 
 import {
-  AuditResult,
+    AuditResult,
 } from "@/types/audit"
 
 const openai = new OpenAI({
@@ -27,7 +27,7 @@ Continue periodically reviewing usage patterns, annual billing opportunities, an
   return `
 Your organization may be overspending on AI tooling across overlapping subscriptions, premium plans, or governance-heavy tiers.
 
-The audit identified approximately ₹${audit.estimatedMonthlySavings.toLocaleString()} in potential monthly savings, equivalent to roughly ₹${audit.estimatedAnnualSavings.toLocaleString()} annually.
+The audit identified approximately $${audit.estimatedMonthlySavings.toLocaleString()} in potential monthly savings, equivalent to roughly $${audit.estimatedAnnualSavings.toLocaleString()} annually.
 
 Reviewing redundant tooling, plan downgrades, and billing optimizations could significantly improve operational efficiency.
 `
@@ -52,9 +52,9 @@ export async function generateSummary(
 You are generating a concise executive audit summary for a startup reviewing its AI tooling spend.
 
 Audit data:
-- Total monthly spend: ₹${audit.totalMonthlySpend}
-- Estimated monthly savings: ₹${audit.estimatedMonthlySavings}
-- Estimated annual savings: ₹${audit.estimatedAnnualSavings}
+- Total monthly spend: $${audit.totalMonthlySpend}
+- Estimated monthly savings: $${audit.estimatedMonthlySavings}
+- Estimated annual savings: $${audit.estimatedAnnualSavings}
 - Optimization score: ${audit.optimizationScore}/100
 
 Top recommendations:

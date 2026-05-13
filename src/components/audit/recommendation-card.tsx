@@ -45,7 +45,7 @@ export function RecommendationCard({
           </p>
 
           <p className="text-2xl font-black tracking-tight text-green-600">
-            ₹
+            $
             {recommendation.estimatedMonthlySavings.toLocaleString()}
 
             <span className="text-sm font-medium text-muted-foreground">

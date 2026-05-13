@@ -18,7 +18,7 @@ export function AuditSummary({
           </p>
 
           <h2 className="mt-4 text-5xl font-black tracking-tight text-slate-900">
-            ₹
+            $
             {totalMonthlySpend.toLocaleString()}
           </h2>
 
@@ -37,7 +37,7 @@ export function AuditSummary({
           </p>
 
           <h2 className="mt-4 text-5xl font-black tracking-tight text-green-700">
-            ₹
+            $
             {estimatedMonthlySavings.toLocaleString()}
           </h2>
 

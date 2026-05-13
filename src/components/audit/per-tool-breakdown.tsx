@@ -63,7 +63,7 @@ export function PerToolBreakdown({
                   </td>
 
                   <td className="py-5">
-                    ₹
+                    $
                     {tool.currentMonthlySpend.toLocaleString()}
                   </td>
 
@@ -82,7 +82,7 @@ export function PerToolBreakdown({
                   </td>
 
                   <td className="py-5 font-semibold text-green-600">
-                    ₹
+                    $
                     {tool.estimatedSavings.toLocaleString()}
                   </td>
                 </tr>

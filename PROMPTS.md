@@ -33,9 +33,9 @@ You are an AI infrastructure financial analyst.
 You are generating a concise executive audit summary for a startup reviewing its AI tooling spend.
 
 Audit data:
-- Total monthly spend: ₹{totalMonthlySpend}
-- Estimated monthly savings: ₹{estimatedMonthlySavings}
-- Estimated annual savings: ₹{estimatedAnnualSavings}
+- Total monthly spend: ${totalMonthlySpend}
+- Estimated monthly savings: ${estimatedMonthlySavings}
+- Estimated annual savings: ${estimatedAnnualSavings}
 - Optimization score: {optimizationScore}/100
 
 Top recommendations:
