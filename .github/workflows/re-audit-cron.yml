@@ -1,6 +1,11 @@
 name: Reaudit Cron
 
 on:
+
+  push:
+    branches:
+        - round-2-reaudit
+        
   schedule:
     - cron: "0 */6 * * *"
 
