@@ -35,29 +35,75 @@ export async function POST() {
         )
 
       if (changes.length > 0) {
-            const updatedAudit =
-            generateReaudit(
-                audit.input_stack
-            )
-        
-        await sendReauditEmail({
+        const updatedAudit =
+        generateReaudit(
+            audit.input_stack
+        )
+
+        const {
+        data: newAudit,
+        error: insertError,
+        } = await supabase
+        .from("audits")
+        .insert([
+            {
             email: audit.email,
 
-            auditId: audit.id,
+            input_stack:
+                audit.input_stack,
 
-            oldSavings:
-                audit.audit_result
-                .estimatedMonthlySavings,
+            audit_result:
+                updatedAudit,
 
-            newSavings:
-                updatedAudit
-                .estimatedMonthlySavings,
+            pricing_snapshot:
+                PLAN_CATALOGUE,
 
-            delta:
-                updatedAudit
-                .estimatedMonthlySavings -
-                audit.audit_result
-                .estimatedMonthlySavings,
+            total_monthly_spend:
+                updatedAudit.totalMonthlySpend,
+
+            estimated_monthly_savings:
+                updatedAudit.estimatedMonthlySavings,
+
+            estimated_annual_savings:
+                updatedAudit.estimatedAnnualSavings,
+
+            optimization_score:
+                updatedAudit.optimizationScore,
+
+            recommendations:
+                updatedAudit.recommendations,
+
+            per_tool_breakdown:
+                updatedAudit.perToolBreakdown,
+            },
+        ])
+        .select()
+        .single()
+
+        if (insertError) {
+        console.error(insertError)
+
+        continue
+        }
+
+        await sendReauditEmail({
+        email: audit.email,
+
+        auditId: newAudit.id,
+
+        oldSavings:
+            audit.audit_result
+            .estimatedMonthlySavings,
+
+        newSavings:
+            updatedAudit
+            .estimatedMonthlySavings,
+
+        delta:
+            updatedAudit
+            .estimatedMonthlySavings -
+            audit.audit_result
+            .estimatedMonthlySavings,
         })
 
         affectedAudits.push({
