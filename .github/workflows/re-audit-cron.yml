@@ -13,4 +13,4 @@ jobs:
     steps:
       - name: Trigger pricing re-audit
         run: |
-          curl -X POST https://ai-cost-lens-afrxxa971-sneha-deepthi-s-projects.vercel.app/api/detect-changes
+          curl -X POST https://ai-cost-lens-git-round-2-reaudit-sneha-deepthi-s-projects.vercel.app/api/detect-changes
