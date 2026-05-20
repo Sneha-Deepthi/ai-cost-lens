@@ -167,7 +167,7 @@ export const PLAN_CATALOGUE: Record<string, PlanEntry> = {
   chatgpt_plus: {
     tool: "ChatGPT",
     plan: "Plus",
-    monthlyPerSeat: 25,
+    monthlyPerSeat: 20,
     annualPerSeat: 20,
     tier: "individual",
     useCaseFit: ["writing", "research", "data", "mixed", "coding"],
