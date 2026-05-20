@@ -22,6 +22,24 @@ export async function POST() {
       throw error
     }
 
+    const userNotifications:
+        Record<
+        string,
+        {
+            auditId: string
+
+            newAuditId: string
+
+            changes: any[]
+
+            oldSavings: number
+
+            newSavings: number
+
+            delta: number
+        }[]
+        > = {}
+
     const affectedAudits = []
 
     for (const audit of audits) {
@@ -86,10 +104,16 @@ export async function POST() {
         continue
         }
 
-        await sendReauditEmail({
-        email: audit.email,
+        if (!userNotifications[audit.email]) {
+        userNotifications[audit.email] = []
+        }
 
-        auditId: newAudit.id,
+        userNotifications[audit.email].push({
+        auditId: audit.id,
+
+        newAuditId: newAudit.id,
+
+        changes,
 
         oldSavings:
             audit.audit_result
@@ -128,6 +152,19 @@ export async function POST() {
             .estimatedMonthlySavings,
         })
       }
+    }
+
+    for (const [
+    email,
+    notifications,
+    ] of Object.entries(
+    userNotifications
+    )) {
+    await sendReauditEmail({
+        email,
+
+        notifications,
+    })
     }
 
     return NextResponse.json({
