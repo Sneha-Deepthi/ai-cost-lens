@@ -49,6 +49,7 @@ export default async function AuditPage({
   if (!data) {
     notFound()
   }
+  const audit = data.audit_result
 
   return (
     <main className="min-h-screen bg-linear-to-b from-slate-50 via-white to-slate-100">
@@ -74,30 +75,30 @@ export default async function AuditPage({
         <section className="grid gap-6 md:grid-cols-4">
           <MetricCard
             title="Monthly Spend"
-            value={`$${data.total_monthly_spend.toLocaleString()}`}
+            value={`$${audit.totalMonthlySpend.toLocaleString()}`}
             subtitle="Current AI tooling expenditure"
           />
 
           <MetricCard
             title="Monthly Savings"
-            value={`$${data.estimated_monthly_savings.toLocaleString()}`}
+            value={`$${audit.estimatedMonthlySavings.toLocaleString()}`}
             subtitle="Potential monthly optimization savings"
           />
 
           <MetricCard
             title="Annual Savings"
-            value={`$${data.estimated_annual_savings.toLocaleString()}`}
+            value={`$${audit.estimatedAnnualSavings.toLocaleString()}`}
             subtitle="Projected annual savings opportunities"
           />
 
           <MetricCard
             title="Optimization Score"
-            value={`${data.optimization_score}/100`}
+            value={`${audit.optimizationScore}/100`}
             subtitle="Higher means better tooling efficiency"
           />
         </section>
 
-        {data.estimated_monthly_savings > 500 && (
+        {audit.estimatedMonthlySavings > 500 && (
           <section className="rounded-3xl bg-linear-to-r from-indigo-600 to-violet-600 p-8 text-white shadow-xl">
             <p className="text-sm font-semibold uppercase tracking-wide text-indigo-100">
               High Savings Opportunity
@@ -105,7 +106,7 @@ export default async function AuditPage({
 
             <h2 className="mt-3 text-3xl font-black">
               You could save $
-              {data.estimated_annual_savings.toLocaleString()}
+              {audit.estimatedAnnualSavings.toLocaleString()}
               /year
             </h2>
 
@@ -136,7 +137,7 @@ export default async function AuditPage({
         <section>
           <RecommendationsList
             recommendations={
-              data.recommendations
+              audit.recommendations
             }
           />
         </section>
@@ -144,7 +145,7 @@ export default async function AuditPage({
         <section>
           <PerToolBreakdown
             breakdown={
-              data.per_tool_breakdown
+              audit.perToolBreakdown
             }
           />
         </section>
@@ -162,13 +163,13 @@ export default async function AuditPage({
         <section id="lead-capture">
           <LeadCapture
             estimatedMonthlySavings={
-              data.estimated_monthly_savings
+              audit.estimatedMonthlySavings
             }
             estimatedAnnualSavings={
-              data.estimated_annual_savings
+              audit.estimatedAnnualSavings
             }
             optimizationScore={
-              data.optimization_score
+              audit.optimizationScore
             }
           />
         </section>

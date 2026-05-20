@@ -1,16 +1,30 @@
-import { toolPlans, ToolPlan } from "@/data/tools";
+import {
+  PLAN_CATALOGUE,
+  PlanEntry,
+} from "@/data/tools"
 
-export function getCurrentPricing(): ToolPlan[] {
-  return toolPlans;
+export function getCurrentPricing(): Record<
+  string,
+  PlanEntry
+> {
+  return PLAN_CATALOGUE
 }
 
-export function createPricingSnapshot(): ToolPlan[] {
-  return structuredClone(toolPlans);
+export function createPricingSnapshot(): Record<
+  string,
+  PlanEntry
+> {
+  return structuredClone(
+    PLAN_CATALOGUE
+  )
 }
 
 export function getPlanById(
   id: string,
-  pricingData: ToolPlan[] = toolPlans
+  pricingData: Record<
+    string,
+    PlanEntry
+  > = PLAN_CATALOGUE
 ) {
-  return pricingData.find((plan) => plan.id === id);
+  return pricingData[id] ?? null
 }

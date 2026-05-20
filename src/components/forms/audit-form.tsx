@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 
-import { toolPlans } from "@/data/tools"
+import { PLAN_CATALOGUE } from "@/data/tools"
 
 import {
   AuditFormState,
@@ -34,6 +34,7 @@ function createSubscription(): SubscriptionFormItem {
 
 function getInitialFormState(): AuditFormState {
   return {
+    email: "",
     companyName: "",
     teamSize: 1,
     primaryUseCase: "coding",
@@ -54,9 +55,14 @@ export function AuditForm({
       const savedState =
         localStorage.getItem(STORAGE_KEY)
 
-      return savedState
-        ? JSON.parse(savedState)
-        : getInitialFormState()
+      if (!savedState) {
+        return getInitialFormState()
+      }
+
+      return {
+        ...getInitialFormState(),
+        ...JSON.parse(savedState),
+      }
     } catch {
       localStorage.removeItem(STORAGE_KEY)
 
@@ -157,6 +163,26 @@ export function AuditForm({
       className="space-y-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm"
     >
       <div className="grid gap-4 md:grid-cols-2">
+        <div>
+          <label className="mb-2 block text-sm font-medium">
+            Email
+          </label>
+
+          <input
+            required
+            type="email"
+            value={formState.email}
+            onChange={(e) =>
+              setFormState((prev) => ({
+                ...prev,
+                email:
+                  e.target.value,
+              }))
+            }
+            className="w-full rounded-lg border p-3"
+          />
+        </div>
+
         <div>
           <label className="mb-2 block text-sm font-medium">
             Company Name
@@ -280,11 +306,11 @@ export function AuditForm({
                     Select Tool
                   </option>
 
-                  {toolPlans.map(
-                    (tool) => (
+                  {Object.entries(PLAN_CATALOGUE).map(
+                    ([id, tool]) => (
                       <option
-                        key={tool.id}
-                        value={tool.id}
+                        key={id}
+                        value={id}
                       >
                         {tool.tool}{" "}
                         {tool.plan}

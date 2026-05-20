@@ -111,6 +111,8 @@ export type SubscriptionFormItem = {
 }
 
 export type AuditFormState = {
+  email: string
+
   companyName: string
 
   teamSize: number
