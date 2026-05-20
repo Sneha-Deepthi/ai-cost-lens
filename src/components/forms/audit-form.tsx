@@ -45,24 +45,24 @@ export function AuditForm({
   onSubmit,
 }: Props) {
   const [formState, setFormState] =
-    useState<AuditFormState>(
-      getInitialFormState()
-    )
-
-  useEffect(() => {
-    const savedState =
-      localStorage.getItem(STORAGE_KEY)
+  useState<AuditFormState>(() => {
+    if (typeof window === "undefined") {
+      return getInitialFormState()
+    }
 
     try {
-      if (savedState) {
-        setFormState(
-          JSON.parse(savedState)
-        )
-      }
+      const savedState =
+        localStorage.getItem(STORAGE_KEY)
+
+      return savedState
+        ? JSON.parse(savedState)
+        : getInitialFormState()
     } catch {
       localStorage.removeItem(STORAGE_KEY)
+
+      return getInitialFormState()
     }
-  }, [])
+  })
 
   useEffect(() => {
     localStorage.setItem(
