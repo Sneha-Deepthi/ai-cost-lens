@@ -6,6 +6,8 @@ import { PLAN_CATALOGUE } from "@/data/tools"
 
 import { detectPricingChanges } from "@/lib/pricing/detect-pricing-changes"
 
+import { generateReaudit } from "@/lib/reaudit/generate-reaudit"
+
 export async function POST() {
   try {
     const { data: audits, error } =
@@ -30,13 +32,32 @@ export async function POST() {
           PLAN_CATALOGUE
         )
 
+    const updatedAudit =
+        generateReaudit(
+            audit.input_stack
+        )
+
       if (changes.length > 0) {
         affectedAudits.push({
-          auditId: audit.id,
+        auditId: audit.id,
 
-          email: audit.email,
+        email: audit.email,
 
-          changes,
+        changes,
+
+        oldSavings:
+            audit.audit_result
+            .estimatedMonthlySavings,
+
+        newSavings:
+            updatedAudit
+            .estimatedMonthlySavings,
+
+        delta:
+            updatedAudit
+            .estimatedMonthlySavings -
+            audit.audit_result
+            .estimatedMonthlySavings,
         })
       }
     }
