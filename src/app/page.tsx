@@ -8,13 +8,20 @@ import { generateAudit } from "@/engine/recommendation-engine"
 
 import { AuditFormState } from "@/types/audit"
 
+import {
+  createPricingSnapshot,
+} from "@/lib/pricing/pricing-provider"
+
 export default function Home() {
   const router = useRouter()
 
   async function handleGenerateAudit(
     formData: AuditFormState
   ) {
-    const result = generateAudit({
+    const pricingSnapshot =
+      createPricingSnapshot()
+
+    const auditInput = {
       companyName: formData.companyName,
 
       teamSize: formData.teamSize,
@@ -25,7 +32,13 @@ export default function Home() {
 
       subscriptions:
         formData.subscriptions,
-    })
+    }
+
+    const result =
+      generateAudit(
+        auditInput,
+        pricingSnapshot
+      )
 
     const summaryResponse =
       await fetch(
@@ -56,7 +69,13 @@ export default function Home() {
         },
 
         body: JSON.stringify({
-          ...result,
+          email: formData.email,
+
+          inputStack: auditInput,
+
+          auditResult: result,
+
+          pricingSnapshot,
 
           summary:
             summaryData.summary,

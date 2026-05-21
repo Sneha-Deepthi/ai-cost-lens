@@ -12,12 +12,10 @@ export async function POST(
       await req.json()
 
     const {
-      totalMonthlySpend,
-      estimatedMonthlySavings,
-      estimatedAnnualSavings,
-      optimizationScore,
-      recommendations,
-      perToolBreakdown,
+      email,
+      inputStack,
+      auditResult,
+      pricingSnapshot,
       summary,
     } = body
 
@@ -26,22 +24,16 @@ export async function POST(
         .from("audits")
         .insert([
           {
-            total_monthly_spend:
-              totalMonthlySpend,
+            email,
 
-            estimated_monthly_savings:
-              estimatedMonthlySavings,
+            input_stack:
+              inputStack,
 
-            estimated_annual_savings:
-              estimatedAnnualSavings,
+            audit_result:
+              auditResult,
 
-            optimization_score:
-              optimizationScore,
-
-            recommendations,
-
-            per_tool_breakdown:
-              perToolBreakdown,
+            pricing_snapshot:
+              pricingSnapshot,
 
             summary,
             

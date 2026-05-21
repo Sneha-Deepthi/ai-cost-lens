@@ -1,0 +1,21 @@
+name: Reaudit Cron
+
+on:
+
+  push:
+    branches:
+        - round-2-reaudit
+        
+  schedule:
+    - cron: "0 */6 * * *"
+
+  workflow_dispatch:
+
+jobs:
+  trigger-reaudit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger pricing re-audit
+        run: |
+          curl -X POST https://aicostlens.vercel.app/api/detect-changes

@@ -111,6 +111,8 @@ export type SubscriptionFormItem = {
 }
 
 export type AuditFormState = {
+  email: string
+
   companyName: string
 
   teamSize: number
@@ -120,3 +122,12 @@ export type AuditFormState = {
   subscriptions: SubscriptionFormItem[]
 }
 
+export type PricingChange = {
+  tool: string
+
+  plan: string
+
+  oldPrice: number
+
+  newPrice: number
+}

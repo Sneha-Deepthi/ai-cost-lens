@@ -10,17 +10,16 @@ import {
   WorkflowType,
 } from "@/types/audit"
 
+import {
+  PLAN_CATALOGUE,
+  PlanEntry,
+  UseCase,
+} from "@/data/tools"
+
 // ---------------------------------------------------------------------------
 // Local helper types only
 // ---------------------------------------------------------------------------
 
-type UseCase = WorkflowType
-
-type PlanTier =
-  | "individual"
-  | "team"
-  | "enterprise"
-  | "premium_individual"
 
 type PerToolBreakdown = {
   toolId: string
@@ -36,318 +35,24 @@ type PerToolBreakdown = {
   note: string
 }
 
-interface PlanEntry {
-  tool: string
 
-  plan: string
-
-  monthlyPerSeat: number
-
-  annualPerSeat: number
-
-  tier: PlanTier
-
-  useCaseFit: UseCase[]
-
-  nextCheaperPlanId: string | null
-}
-
-
-export const PLAN_CATALOGUE: Record<string, PlanEntry> = {
-  // ── Cursor ──────────────────────────────────────────────────────────────────
-  // Source: https://cursor.com/pricing  — verified May 2026
-  cursor_hobby: {
-    tool: "Cursor",
-    plan: "Hobby",
-    monthlyPerSeat: 0,
-    annualPerSeat: 0,
-    tier: "individual",
-    useCaseFit: ["coding"],
-    nextCheaperPlanId: null,
-  },
-  cursor_pro: {
-    tool: "Cursor",
-    plan: "Pro",
-    monthlyPerSeat: 20,
-    annualPerSeat: 20,
-    tier: "individual",
-    useCaseFit: ["coding"],
-    nextCheaperPlanId: "cursor_hobby",
-  },
-  cursor_teams: {
-    tool: "Cursor",
-    plan: "Teams",
-    monthlyPerSeat: 40,
-    annualPerSeat: 40,
-    tier: "team",
-    useCaseFit: ["coding"],
-    nextCheaperPlanId: "cursor_pro",
-  },
-  cursor_enterprise: {
-    tool: "Cursor",
-    plan: "Enterprise",
-    monthlyPerSeat: 60, // custom pricing — conservative floor used
-    annualPerSeat: 60,
-    tier: "enterprise",
-    useCaseFit: ["coding"],
-    nextCheaperPlanId: "cursor_teams",
-  },
-
-  // ── GitHub Copilot ──────────────────────────────────────────────────────────
-  // Source: https://github.com/features/copilot/plans  — verified May 2026
-  copilot_individual: {
-    tool: "GitHub Copilot",
-    plan: "Individual",
-    monthlyPerSeat: 10,
-    annualPerSeat: 10,
-    tier: "individual",
-    useCaseFit: ["coding"],
-    nextCheaperPlanId: null,
-  },
-  copilot_business: {
-    tool: "GitHub Copilot",
-    plan: "Business",
-    monthlyPerSeat: 19,
-    annualPerSeat: 19,
-    tier: "team",
-    useCaseFit: ["coding"],
-    nextCheaperPlanId: "copilot_individual",
-  },
-  copilot_enterprise: {
-    tool: "GitHub Copilot",
-    plan: "Enterprise",
-    monthlyPerSeat: 39,
-    annualPerSeat: 39,
-    tier: "enterprise",
-    useCaseFit: ["coding"],
-    nextCheaperPlanId: "copilot_business",
-  },
-
-  // ── Claude ──────────────────────────────────────────────────────────────────
-  // Source: https://claude.com/pricing  — verified May 2026
-  claude_free: {
-    tool: "Claude",
-    plan: "Free",
-    monthlyPerSeat: 0,
-    annualPerSeat: 0,
-    tier: "individual",
-    useCaseFit: ["writing", "research", "mixed"],
-    nextCheaperPlanId: null,
-  },
-  claude_pro: {
-    tool: "Claude",
-    plan: "Pro",
-    monthlyPerSeat: 20,
-    annualPerSeat: 17, // $17/mo billed annually
-    tier: "individual",
-    useCaseFit: ["writing", "research", "coding", "mixed"],
-    nextCheaperPlanId: "claude_free",
-  },
-  claude_max: {
-    tool: "Claude",
-    plan: "Max",
-    monthlyPerSeat: 100,
-    annualPerSeat: 100,
-    tier: "premium_individual",
-    useCaseFit: ["writing", "research", "coding", "mixed"],
-    nextCheaperPlanId: "claude_pro",
-  },
-  claude_team_standard: {
-    tool: "Claude",
-    plan: "Team (Standard)",
-    monthlyPerSeat: 25,
-    annualPerSeat: 20, // $20/seat/mo billed annually
-    tier: "team",
-    useCaseFit: ["writing", "research", "coding", "mixed"],
-    nextCheaperPlanId: "claude_pro",
-  },
-  claude_team_premium: {
-    tool: "Claude",
-    plan: "Team (Premium)",
-    monthlyPerSeat: 125,
-    annualPerSeat: 100, // $100/seat/mo billed annually
-    tier: "team",
-    useCaseFit: ["writing", "research", "coding", "mixed"],
-    nextCheaperPlanId: "claude_team_standard",
-  },
-  claude_enterprise: {
-    tool: "Claude",
-    plan: "Enterprise",
-    monthlyPerSeat: 150, // custom pricing — conservative floor used
-    annualPerSeat: 150,
-    tier: "enterprise",
-    useCaseFit: ["writing", "research", "coding", "mixed"],
-    nextCheaperPlanId: "claude_team_standard",
-  },
-  claude_api: {
-    tool: "Claude",
-    plan: "API (Direct)",
-    monthlyPerSeat: 0, // usage-based, not a fixed seat cost
-    annualPerSeat: 0,
-    tier: "individual",
-    useCaseFit: ["coding", "mixed"],
-    nextCheaperPlanId: null,
-  },
-
-  // ── ChatGPT ─────────────────────────────────────────────────────────────────
-  // Source: https://chatgpt.com/pricing  — verified May 2026
-  chatgpt_plus: {
-    tool: "ChatGPT",
-    plan: "Plus",
-    monthlyPerSeat: 20,
-    annualPerSeat: 20,
-    tier: "individual",
-    useCaseFit: ["writing", "research", "data", "mixed", "coding"],
-    nextCheaperPlanId: null,
-  },
-  chatgpt_team: {
-    tool: "ChatGPT",
-    plan: "Team",
-    monthlyPerSeat: 30,
-    annualPerSeat: 25, // $25/user/mo billed annually
-    tier: "team",
-    useCaseFit: ["writing", "research", "data", "mixed", "coding"],
-    nextCheaperPlanId: "chatgpt_plus",
-  },
-  chatgpt_enterprise: {
-    tool: "ChatGPT",
-    plan: "Enterprise",
-    monthlyPerSeat: 60, // custom pricing — conservative floor used
-    annualPerSeat: 60,
-    tier: "enterprise",
-    useCaseFit: ["writing", "research", "data", "mixed", "coding"],
-    nextCheaperPlanId: "chatgpt_team",
-  },
-  chatgpt_api: {
-    tool: "ChatGPT",
-    plan: "API (Direct)",
-    monthlyPerSeat: 0,
-    annualPerSeat: 0,
-    tier: "individual",
-    useCaseFit: ["coding", "mixed"],
-    nextCheaperPlanId: null,
-  },
-
-  // ── Gemini ──────────────────────────────────────────────────────────────────
-  // Source: https://gemini.google/subscriptions/  — verified May 2026
-  // Ultra price: $24,500/mo ≈ $295 USD — rounded to $300
-  gemini_pro: {
-    tool: "Gemini",
-    plan: "Pro",
-    monthlyPerSeat: 20,
-    annualPerSeat: 20,
-    tier: "individual",
-    useCaseFit: ["writing", "research", "data", "mixed"],
-    nextCheaperPlanId: null,
-  },
-  gemini_ultra: {
-    tool: "Gemini",
-    plan: "Ultra",
-    monthlyPerSeat: 300,
-    annualPerSeat: 300,
-    tier: "premium_individual",
-    useCaseFit: ["writing", "research", "data", "mixed"],
-    nextCheaperPlanId: "gemini_pro",
-  },
-  gemini_api: {
-    tool: "Gemini",
-    plan: "API (Direct)",
-    monthlyPerSeat: 0,
-    annualPerSeat: 0,
-    tier: "individual",
-    useCaseFit: ["coding", "mixed"],
-    nextCheaperPlanId: null,
-  },
-
-  // ── Windsurf ─────────────────────────────────────────────────────────────────
-  // Source: https://windsurf.com/pricing  — verified May 2026
-  windsurf_free: {
-    tool: "Windsurf",
-    plan: "Free",
-    monthlyPerSeat: 0,
-    annualPerSeat: 0,
-    tier: "individual",
-    useCaseFit: ["coding"],
-    nextCheaperPlanId: null,
-  },
-  windsurf_pro: {
-    tool: "Windsurf",
-    plan: "Pro",
-    monthlyPerSeat: 20,
-    annualPerSeat: 20,
-    tier: "individual",
-    useCaseFit: ["coding"],
-    nextCheaperPlanId: "windsurf_free",
-  },
-  windsurf_teams: {
-    tool: "Windsurf",
-    plan: "Teams",
-    monthlyPerSeat: 40,
-    annualPerSeat: 40,
-    tier: "team",
-    useCaseFit: ["coding"],
-    nextCheaperPlanId: "windsurf_pro",
-  },
-  windsurf_max: {
-    tool: "Windsurf",
-    plan: "Max",
-    monthlyPerSeat: 200,
-    annualPerSeat: 200,
-    tier: "premium_individual",
-    useCaseFit: ["coding"],
-    nextCheaperPlanId: "windsurf_pro",
-  },
-  windsurf_enterprise: {
-    tool: "Windsurf",
-    plan: "Enterprise",
-    monthlyPerSeat: 60, // custom pricing — conservative floor used
-    annualPerSeat: 60,
-    tier: "enterprise",
-    useCaseFit: ["coding"],
-    nextCheaperPlanId: "windsurf_teams",
-  },
-
-  // ── Lovable ──────────────────────────────────────────────────────────────────
-  // Source: https://lovable.dev/pricing  — verified May 2026
-  lovable_free: {
-    tool: "Lovable",
-    plan: "Free",
-    monthlyPerSeat: 0,
-    annualPerSeat: 0,
-    tier: "individual",
-    useCaseFit: ["coding", "mixed"],
-    nextCheaperPlanId: null,
-  },
-  lovable_pro: {
-    tool: "Lovable",
-    plan: "Pro",
-    monthlyPerSeat: 25,
-    annualPerSeat: 25,
-    tier: "individual",
-    useCaseFit: ["coding", "mixed"],
-    nextCheaperPlanId: "lovable_free",
-  },
-  lovable_business: {
-    tool: "Lovable",
-    plan: "Business",
-    monthlyPerSeat: 50,
-    annualPerSeat: 50,
-    tier: "team",
-    useCaseFit: ["coding", "mixed"],
-    nextCheaperPlanId: "lovable_pro",
-  },
-};
 
 // ---------------------------------------------------------------------------
 // Internal helpers
 // ---------------------------------------------------------------------------
 
-function getPlan(toolId: string): PlanEntry | null {
-  return PLAN_CATALOGUE[toolId] ?? null;
+function getPlan(
+  toolId: string,
+  pricingData: Record<string, PlanEntry> = PLAN_CATALOGUE
+): PlanEntry | null {
+  return pricingData[toolId] ?? null;
 }
 
-function getDisplayName(toolId: string): string {
-  const p = getPlan(toolId);
+function getDisplayName(
+  toolId: string,
+  pricingData = PLAN_CATALOGUE
+): string {
+  const p = getPlan(toolId,pricingData);
   return p ? `${p.tool} ${p.plan}` : toolId;
 }
 
@@ -405,7 +110,7 @@ function getBestAlternativeTool(
 // Rule type
 // ---------------------------------------------------------------------------
 
-type Rule = (input: AuditInput) => AuditRecommendation[];
+type Rule = (input: AuditInput, pricingData?: Record<string, PlanEntry>) => AuditRecommendation[];
 
 // ---------------------------------------------------------------------------
 // RULE A — Small team on a team-tier plan
@@ -415,16 +120,16 @@ type Rule = (input: AuditInput) => AuditRecommendation[];
 // individual plan price.  For ≤ 2 users these governance features have near-zero
 // operational value.  The savings = (team price − individual price) × seats.
 // ---------------------------------------------------------------------------
-export const ruleA_smallTeamOnTeamPlan: Rule = (input) => {
+export const ruleA_smallTeamOnTeamPlan: Rule = (input,pricingData = PLAN_CATALOGUE) => {
   if (input.teamSize > 2) return [];
   const recs: AuditRecommendation[] = [];
 
   for (const sub of input.subscriptions) {
-    const plan = getPlan(sub.toolId);
+    const plan = getPlan(sub.toolId,pricingData);
     if (!plan || plan.tier !== "team") continue;
 
     const downgradePlan = plan.nextCheaperPlanId
-      ? getPlan(plan.nextCheaperPlanId)
+      ? getPlan(plan.nextCheaperPlanId,pricingData)
       : null;
     if (!downgradePlan) continue;
 
@@ -461,15 +166,15 @@ export const ruleA_smallTeamOnTeamPlan: Rule = (input) => {
 // For most teams, Pro-tier limits are never hit.  The savings = the delta
 // between the premium and the next cheaper plan × seats.
 // ---------------------------------------------------------------------------
-export const ruleB_premiumTierOverkill: Rule = (input) => {
+export const ruleB_premiumTierOverkill: Rule = (input,pricingData = PLAN_CATALOGUE) => {
   const recs: AuditRecommendation[] = [];
 
   for (const sub of input.subscriptions) {
-    const plan = getPlan(sub.toolId);
+    const plan = getPlan(sub.toolId,pricingData);
     if (!plan || plan.tier !== "premium_individual") continue;
 
     const downgradePlan = plan.nextCheaperPlanId
-      ? getPlan(plan.nextCheaperPlanId)
+      ? getPlan(plan.nextCheaperPlanId,pricingData)
       : null;
     if (!downgradePlan) continue;
 
@@ -517,7 +222,7 @@ export const ruleB_premiumTierOverkill: Rule = (input) => {
 // Conservative estimate: 60 % of redundant spend is truly cancellable
 // (some teams have genuine workflow divergence across tools).
 // ---------------------------------------------------------------------------
-export const ruleC_conversationalOverlap: Rule = (input) => {
+export const ruleC_conversationalOverlap: Rule = (input,pricingData = PLAN_CATALOGUE) => {
   const CONVERSATIONAL_FAMILIES = new Set(["chatgpt", "claude", "gemini"]);
 
   const activeSubs = input.subscriptions.filter((s) =>
@@ -531,7 +236,7 @@ export const ruleC_conversationalOverlap: Rule = (input) => {
   const redundantSpend = sorted.slice(1).reduce((sum, s) => sum + s.monthlySpend, 0);
   const estimatedSavings = Math.round(redundantSpend * 0.6);
 
-  const toolNames = activeSubs.map((s) => getPlan(s.toolId)?.tool ?? s.toolId).join(", ");
+  const toolNames = activeSubs.map((s) => getPlan(s.toolId,pricingData)?.tool ?? s.toolId).join(", ");
   const combinedSpend = activeSubs.reduce((s, x) => s + x.monthlySpend, 0);
 
   return [
@@ -563,7 +268,7 @@ export const ruleC_conversationalOverlap: Rule = (input) => {
 // AI chat, and multi-file editing.  No engineering team gets 2× productivity
 // from two coding IDEs.  Redundant spend = everything beyond the primary tool.
 // ---------------------------------------------------------------------------
-export const ruleD_codingAssistantOverlap: Rule = (input) => {
+export const ruleD_codingAssistantOverlap: Rule = (input,pricingData=PLAN_CATALOGUE) => {
   const CODING_FAMILIES = new Set(["cursor", "copilot", "windsurf"]);
 
   const activeSubs = input.subscriptions.filter((s) =>
@@ -574,7 +279,7 @@ export const ruleD_codingAssistantOverlap: Rule = (input) => {
 
   const sorted = [...activeSubs].sort((a, b) => b.monthlySpend - a.monthlySpend);
   const redundantSpend = sorted.slice(1).reduce((sum, s) => sum + s.monthlySpend, 0);
-  const toolNames = activeSubs.map((s) => getPlan(s.toolId)?.tool ?? s.toolId).join(" + ");
+  const toolNames = activeSubs.map((s) => getPlan(s.toolId,pricingData)?.tool ?? s.toolId).join(" + ");
 
   return [
     {
@@ -648,11 +353,11 @@ export const ruleE_lovableAndCodingIdeOverlap: Rule = (input) => {
 // capabilities that have minimal overlap with their actual workflow.
 // Only flag when spend is ≥ $20/mo to avoid noise on trivial subscriptions.
 // ---------------------------------------------------------------------------
-export const ruleF_useCaseMismatch: Rule = (input) => {
+export const ruleF_useCaseMismatch: Rule = (input,pricingData = PLAN_CATALOGUE) => {
   const recs: AuditRecommendation[] = [];
 
   for (const sub of input.subscriptions) {
-    const plan = getPlan(sub.toolId);
+    const plan = getPlan(sub.toolId,pricingData);
     if (!plan || plan.monthlyPerSeat === 0) continue; // skip free / usage-based
     if (sub.monthlySpend < 20) continue;             // not worth flagging
     if (plan.useCaseFit.includes(getPrimaryWorkflow(input))) continue; // good fit
@@ -686,16 +391,16 @@ export const ruleF_useCaseMismatch: Rule = (input) => {
 // requirement.  For teams of ≤ 25, these controls are almost always unused.
 // Savings = (enterprise price − next cheaper tier price) × seats.
 // ---------------------------------------------------------------------------
-export const ruleG_enterprisePlanOverkill: Rule = (input) => {
+export const ruleG_enterprisePlanOverkill: Rule = (input,pricingData = PLAN_CATALOGUE) => {
   if (input.teamSize > 25) return []; // legitimately enterprise; skip
   const recs: AuditRecommendation[] = [];
 
   for (const sub of input.subscriptions) {
-    const plan = getPlan(sub.toolId);
+    const plan = getPlan(sub.toolId,pricingData);
     if (!plan || plan.tier !== "enterprise") continue;
 
     const downgradePlan = plan.nextCheaperPlanId
-      ? getPlan(plan.nextCheaperPlanId)
+      ? getPlan(plan.nextCheaperPlanId,pricingData)
       : null;
     if (!downgradePlan) continue;
 
@@ -733,14 +438,14 @@ export const ruleG_enterprisePlanOverkill: Rule = (input) => {
 // Conservative estimate: 60 % of API spend is on tasks a cheaper model handles
 // equally well.  Only fire when monthly API spend ≥ $100.
 // ---------------------------------------------------------------------------
-export const ruleH_apiModelOptimization: Rule = (input) => {
+export const ruleH_apiModelOptimization: Rule = (input,pricingData = PLAN_CATALOGUE) => {
   const recs: AuditRecommendation[] = [];
 
   for (const sub of input.subscriptions) {
     if (!sub.toolId.endsWith("_api")) continue;
     if (sub.monthlySpend < 100) continue; // below noise threshold
 
-    const plan = getPlan(sub.toolId);
+    const plan = getPlan(sub.toolId,pricingData);
     const toolName = plan?.tool ?? sub.toolId;
     const potentialSavings = Math.round(sub.monthlySpend * 0.6);
 
@@ -775,11 +480,11 @@ export const ruleH_apiModelOptimization: Rule = (input) => {
 // Claude Team Standard: $25/mo → $20/mo annually (saves $5/seat/mo)
 // Only fire when savings ≥ $5/mo (below that it's noise).
 // ---------------------------------------------------------------------------
-export const ruleI_annualBillingOpportunity: Rule = (input) => {
+export const ruleI_annualBillingOpportunity: Rule = (input,pricingData = PLAN_CATALOGUE) => {
   const recs: AuditRecommendation[] = [];
 
   for (const sub of input.subscriptions) {
-    const plan = getPlan(sub.toolId);
+    const plan = getPlan(sub.toolId,pricingData);
     if (!plan || plan.monthlyPerSeat === 0) continue;
     if (plan.annualPerSeat >= plan.monthlyPerSeat) continue; // no discount available
 
@@ -817,7 +522,7 @@ export const ruleI_annualBillingOpportunity: Rule = (input) => {
 // coding-specialist price for a need that ChatGPT Plus or Claude Pro already
 // covers at equal or lower cost.  Savings = full subscription cost.
 // ---------------------------------------------------------------------------
-export const ruleJ_codingToolForNonCodingTeam: Rule = (input) => {
+export const ruleJ_codingToolForNonCodingTeam: Rule = (input,pricingData = PLAN_CATALOGUE) => {
   const NON_CODING_USE_CASES = new Set<UseCase>(["writing", "research", "data"]);
   if (!NON_CODING_USE_CASES.has(getPrimaryWorkflow(input))) return [];
 
@@ -825,7 +530,7 @@ export const ruleJ_codingToolForNonCodingTeam: Rule = (input) => {
   const recs: AuditRecommendation[] = [];
 
   for (const sub of input.subscriptions) {
-    const plan = getPlan(sub.toolId);
+    const plan = getPlan(sub.toolId,pricingData);
     if (!plan || !CODING_IDE_FAMILIES.has(toolFamily(sub.toolId))) continue;
     if (sub.monthlySpend === 0) continue;
 
@@ -862,11 +567,11 @@ export const ruleJ_codingToolForNonCodingTeam: Rule = (input) => {
 // - annual billing inconsistencies
 // ---------------------------------------------------------------------------
 
-export const ruleK_pricingMismatch: Rule = (input) => {
+export const ruleK_pricingMismatch: Rule = (input,pricingData = PLAN_CATALOGUE) => {
   const recs: AuditRecommendation[] = [];
 
   for (const sub of input.subscriptions) {
-    const plan = getPlan(sub.toolId);
+    const plan = getPlan(sub.toolId,pricingData);
 
     if (!plan) continue;
 
@@ -965,7 +670,7 @@ export const ruleK_pricingMismatch: Rule = (input) => {
 // ---------------------------------------------------------------------------
 
 export const ruleL_betterAlternativeExists: Rule = (
-  input
+  input,pricingData = PLAN_CATALOGUE
 ) => {
   const recs: AuditRecommendation[] = [];
 
@@ -979,7 +684,7 @@ export const ruleL_betterAlternativeExists: Rule = (
 
   for (const sub of input.subscriptions) {
     const currentPlan =
-      getPlan(sub.toolId);
+      getPlan(sub.toolId,pricingData);
 
     if (!currentPlan) continue;
 
@@ -993,7 +698,7 @@ export const ruleL_betterAlternativeExists: Rule = (
 
     for (const altToolId of alternatives) {
       const altPlan =
-        getPlan(altToolId);
+        getPlan(altToolId,pricingData);
 
       if (!altPlan) continue;
 
@@ -1083,12 +788,13 @@ function deduplicateRecommendations(
 
 function buildPerToolBreakdown(
   input: AuditInput,
-  recommendations: AuditRecommendation[]
+  recommendations: AuditRecommendation[],
+  pricingData=PLAN_CATALOGUE
 ): PerToolBreakdown[] {
   
 
   return input.subscriptions.map((sub) => {
-    const plan = getPlan(sub.toolId);
+    const plan = getPlan(sub.toolId,pricingData);
     const directRecommendation =
       recommendations.find(
         (recommendation) =>
@@ -1158,9 +864,11 @@ const ALL_RULES: Rule[] = [
   ruleL_betterAlternativeExists,
 ];
 
-export function generateAudit(input: AuditInput): AuditResult {
+export function generateAudit(input: AuditInput,pricingData=PLAN_CATALOGUE): AuditResult {
   // 1. Run every rule and collect raw recommendations
-  const rawRecs = ALL_RULES.flatMap((rule) => rule(input));
+  const rawRecs = ALL_RULES.flatMap((rule) =>
+    rule(input, pricingData)
+  );
 
   // 2. De-duplicate: same toolId → keep highest-savings rec
   const recommendations = deduplicateRecommendations(rawRecs);
