@@ -2,13 +2,13 @@ import { notFound } from "next/navigation"
 
 import { supabase } from "@/lib/supabase"
 
-import { RecommendationsList } from "@/components/audit/recommendations-list"
-
 import { PerToolBreakdown } from "@/components/audit/per-tool-breakdown"
 
 import { MetricCard } from "@/components/dashboard/metric-card"
 
 import { getRecommendationDiff } from "@/lib/audit/get-recommendation-diff"
+
+import { AuditRecommendation, PricingChange,} from "@/types/audit"
 
 type Props = {
   params: Promise<{
@@ -120,7 +120,7 @@ export default async function AuditDiffPage({
             <div className="mt-6 grid gap-4 md:grid-cols-2">
               {pricingChanges.map(
                 (
-                  change: any,
+                  change: PricingChange,
                   index: number
                 ) => (
                   <div
@@ -219,7 +219,7 @@ export default async function AuditDiffPage({
   {(
     oldResult.recommendations || []
   ).map(
-    (recommendation: any) => {
+    (recommendation: AuditRecommendation) => {
       const diff =
         recommendationDiffs.find(
           (item) =>
@@ -328,7 +328,7 @@ export default async function AuditDiffPage({
   {(
     newResult.recommendations || []
   ).map(
-    (recommendation: any) => {
+    (recommendation: AuditRecommendation) => {
       const diff =
         recommendationDiffs.find(
           (item) =>

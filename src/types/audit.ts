@@ -122,3 +122,12 @@ export type AuditFormState = {
   subscriptions: SubscriptionFormItem[]
 }
 
+export type PricingChange = {
+  tool: string
+
+  plan: string
+
+  oldPrice: number
+
+  newPrice: number
+}

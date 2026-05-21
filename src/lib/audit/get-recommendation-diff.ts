@@ -1,3 +1,5 @@
+import { AuditRecommendation } from "@/types/audit"
+
 export type RecommendationDiff = {
   title: string
 
@@ -13,8 +15,8 @@ export type RecommendationDiff = {
 }
 
 export function getRecommendationDiff(
-  oldRecommendations: any[] = [],
-  newRecommendations: any[] = []
+  oldRecommendations: AuditRecommendation[] = [],
+  newRecommendations: AuditRecommendation[] = []
 ): RecommendationDiff[] {
   const diffs: RecommendationDiff[] = []
 
@@ -50,7 +52,7 @@ export function getRecommendationDiff(
           newRec.reasoning,
 
         savings:
-          newRec.monthlySavings,
+          newRec.estimatedMonthlySavings,
 
         status: "new",
       })
@@ -61,8 +63,8 @@ export function getRecommendationDiff(
     const changed =
       oldRec.reasoning !==
         newRec.reasoning ||
-      oldRec.monthlySavings !==
-        newRec.monthlySavings
+      oldRec.estimatedMonthlySavings !==
+        newRec.estimatedMonthlySavings
 
     diffs.push({
       title: newRec.title,
@@ -71,7 +73,7 @@ export function getRecommendationDiff(
         newRec.reasoning,
 
       savings:
-        newRec.monthlySavings,
+        newRec.estimatedMonthlySavings,
 
       status: changed
         ? "updated"
@@ -91,7 +93,7 @@ export function getRecommendationDiff(
           oldRec.reasoning,
 
         savings:
-          oldRec.monthlySavings,
+          oldRec.estimatedMonthlySavings,
 
         status: "removed",
       })

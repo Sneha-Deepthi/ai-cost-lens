@@ -4,6 +4,8 @@ import { supabase } from "@/lib/supabase"
 
 import { PLAN_CATALOGUE } from "@/data/tools"
 
+import { PricingChange } from "@/types/audit"
+
 import { detectPricingChanges } from "@/lib/pricing/detect-pricing-changes"
 
 import { generateAudit } from "@/engine/recommendation-engine"
@@ -30,7 +32,7 @@ export async function POST() {
 
             newAuditId: string
 
-            changes: any[]
+            changes: PricingChange[]
 
             oldSavings: number
 
