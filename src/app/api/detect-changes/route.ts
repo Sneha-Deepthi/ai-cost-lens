@@ -6,7 +6,7 @@ import { PLAN_CATALOGUE } from "@/data/tools"
 
 import { detectPricingChanges } from "@/lib/pricing/detect-pricing-changes"
 
-import { generateReaudit } from "@/lib/reaudit/generate-reaudit"
+import { generateAudit } from "@/engine/recommendation-engine"
 
 import { sendReauditEmail } from "@/lib/email/send-reaudit-email"
 
@@ -54,9 +54,20 @@ export async function POST() {
 
       if (changes.length > 0) {
         const updatedAudit =
-        generateReaudit(
-            audit.input_stack
-        )
+        generateAudit({
+            companyName:
+                audit.input_stack.companyName,
+
+            teamSize:
+                audit.input_stack.teamSize,
+
+            workflows: [
+                audit.input_stack.primaryUseCase,
+            ],
+
+            subscriptions:
+                audit.input_stack.subscriptions,
+        })
 
         const {
         data: newAudit,
@@ -75,6 +86,9 @@ export async function POST() {
 
             pricing_snapshot:
                 PLAN_CATALOGUE,
+
+            pricing_changes:
+                changes,
 
             total_monthly_spend:
                 updatedAudit.totalMonthlySpend,
